@@ -21,3 +21,11 @@
     padding: 15px;
 }
 
+.droppable {
+    background-color: transparent;
+    margin: 0;
+    padding: 3px 0px;
+    width: 100%;
+    z-index: 1;
+    height: 100%;
+}

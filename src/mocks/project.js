@@ -9,12 +9,12 @@ export const project = {
       desc: 'Phase 1 description',
       tasks: [
         {
-          id: '1',
+          id: '3564',
           name: 'Task 1',
           desc: 'Task 1 description'
         },
         {
-          id: '2',
+          id: '3453456',
           name: 'Task 2',
           desc: 'Task 2 description'
         }
@@ -26,22 +26,22 @@ export const project = {
       desc: 'Phase 2 description',
       tasks: [
         {
-          id: '1',
+          id: '4455',
           name: 'Task 1',
           desc: 'Task 1 description'
         },
         {
-          id: '2',
+          id: '665',
           name: 'Task 2',
           desc: 'Task 2 description'
         },
         {
-          id: '3',
+          id: '34534',
           name: 'Task 3',
           desc: 'Task 3 description'
         },
         {
-          id: '4',
+          id: '5',
           name: 'Task 4',
           desc: 'Task 4 description'
         }

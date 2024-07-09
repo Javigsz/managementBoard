@@ -4,6 +4,10 @@ import TaskActions from './Task/TaskActions'
 import './index.css'
 import { CiEdit } from 'react-icons/ci'
 import { BsThreeDots } from 'react-icons/bs'
+import { DndContext } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import Droppable from './Droppable'
+import Draggable from './Task/Draggable'
 import SectionActions from './SectionActions'
 
 const MainBoard = ({ projectState, setProjectState }) => {
@@ -11,6 +15,8 @@ const MainBoard = ({ projectState, setProjectState }) => {
   const [showTaskActions, setShowTaskActions] = useState(false)
   const [showSectionActions, setShowSectionActions] = useState(false)
   const [sectionPosition, setSectionPosition] = useState({ top: 0, left: 0 })
+  const [isTaskEditing, setIsTaskEditing] = useState(false)
+
   const handleInputChange = (event, index) => {
     const newState = structuredClone(projectState)
     newState.sections[index].name = event.target.value
@@ -73,59 +79,151 @@ const MainBoard = ({ projectState, setProjectState }) => {
     setProjectState({ ...projectState, sections: [...projectState.sections, newSection] })
   }
 
+  const handleDragOver = (event) => {
+    const { active, over } = event
+
+    if (!over) return
+
+    const { id: activeId } = active
+    const { id: overId } = over
+
+    if (activeId === overId) return
+
+    const sourceIndex = projectState.sections.findIndex((section) =>
+      section.tasks.some((task) => task.id === activeId)
+    )
+    const destinationIndex = projectState.sections.findIndex((section) =>
+      section.tasks.some((task) => task.id === overId)
+    )
+
+    if (sourceIndex !== -1 && destinationIndex === -1) {
+      if (projectState.sections.findIndex((section) => section.id === overId) === sourceIndex) {
+        return
+      }
+      const sourceSection = projectState.sections[sourceIndex]
+      const destinationSection = projectState.sections.find(section => section.id === overId)
+      const destinationSectionIndex = projectState.sections.findIndex(section => section.id === overId)
+
+      const activeTaskIndex = sourceSection.tasks.findIndex((task) => task.id === activeId)
+
+      if (activeTaskIndex !== -1) {
+        const newSourceTasks = [...sourceSection.tasks]
+        const [movedTask] = newSourceTasks.splice(activeTaskIndex, 1)
+
+        const newDestinationTasks = [...destinationSection.tasks]
+        newDestinationTasks.splice(0, 0, movedTask)
+
+        const newSections = [...projectState.sections]
+        newSections[sourceIndex] = { ...sourceSection, tasks: newSourceTasks }
+
+        newSections[destinationSectionIndex] = { ...destinationSection, tasks: newDestinationTasks }
+
+        setProjectState({ ...projectState, sections: newSections })
+      }
+
+      return
+    }
+
+    if (sourceIndex !== -1 && destinationIndex !== -1) {
+      const sourceSection = projectState.sections[sourceIndex]
+      const destinationSection = projectState.sections[destinationIndex]
+
+      const activeTaskIndex = sourceSection.tasks.findIndex((task) => task.id === activeId)
+      const overTaskIndex = destinationSection.tasks.findIndex((task) => task.id === overId)
+
+      if (activeTaskIndex !== -1 && overTaskIndex !== -1) {
+        const newSourceTasks = [...sourceSection.tasks]
+        const [movedTask] = newSourceTasks.splice(activeTaskIndex, 1)
+
+        const newDestinationTasks = [...destinationSection.tasks]
+        if (sourceIndex === destinationIndex) {
+          newDestinationTasks.splice(activeTaskIndex, 1)
+        }
+        newDestinationTasks.splice(overTaskIndex, 0, movedTask)
+
+        const newSections = [...projectState.sections]
+        newSections[sourceIndex] = { ...sourceSection, tasks: newSourceTasks }
+
+        newSections[destinationIndex] = { ...destinationSection, tasks: newDestinationTasks }
+
+        setProjectState({ ...projectState, sections: newSections })
+      }
+    }
+  }
+
   return (
     <>
-
-      <div className='background'>
-        <ol className='mainBoard'>
-          {projectState.sections.map((section, index) => (
-            <li className='section' key={section.id}>
-              <div className='section-header'>
-                <textarea
-                  value={section.name}
-                  onChange={event => handleInputChange(event, index)}
-                  onBlur={event => handleOnBlur(event, index)}
-                  onInput={(e) => handleKeyDown(e)}
-                  spellCheck='false'
-                />
-                <span onClick={(e) => handleClickSection(e, section)}><BsThreeDots /></span>
-              </div>
-              <div className='list'>
-                {section.tasks.map(task => (
-                  <div className='list-task' key={task.id}>
-                    <div className='list-item' onClick={() => handleTaskClick(task)}>
-                      {task.name}
-                      <span><CiEdit onClick={(e) => handleEditClick(e, task)} /></span>
-                    </div>
-                  </div>
-                ))}
-                <button className='add-task' onClick={() => handleClickAddTask(section)}>Add task</button>
-              </div>
-            </li>
-          ))}
-          <div className='flat-button' onClick={() => handleClickAddSection()} key={projectState.sections.length}>Add Section </div>
-        </ol>
-      </div>
-      {showSectionActions &&
-        <SectionActions
-          section={showSectionActions}
-          closeModal={() => setShowSectionActions(false)}
-          sectionPosition={sectionPosition}
-          projectState={projectState}
-          setProjectState={setProjectState}
-          handleClickAddTask={handleClickAddTask}
-        />}
-      {showTask &&
-        <Task
-          task={showTask}
-          closeModal={() => setShowTask(false)}
-        />}
-      {showTaskActions &&
-        <TaskActions
-          task={showTaskActions}
-          closeModal={() => setShowTaskActions(false)}
-          sectionPosition={sectionPosition}
-        />}
+      <DndContext onDragOver={e => handleDragOver(e)}>
+        <div className='background'>
+          <ol className='mainBoard'>
+            {projectState.sections.map((section, index) => (
+              <li className='section' key={section.id}>
+                <div className='section-header'>
+                  <textarea
+                    value={section.name}
+                    onChange={event => handleInputChange(event, index)}
+                    onBlur={event => handleOnBlur(event, index)}
+                    onInput={(e) => handleKeyDown(e)}
+                    spellCheck='false'
+                  />
+                  <span onClick={(e) => handleClickSection(e, section)}><BsThreeDots /></span>
+                </div>
+                <div className='list'>
+                  <Droppable id={section.id}>
+                    <SortableContext items={section.tasks} strategy={verticalListSortingStrategy}>
+                      {section.tasks.map(task => (
+                        <Draggable key={task.id} id={task.id}>
+                          <div className='list-task'>
+                            {isTaskEditing
+                              ? (
+                                <input
+                                  type='text'
+                                  value={task.name}
+                                  onChange={(e) => handleTaskClick(e.target.value)}
+                                />
+                                )
+                              : (
+                                <div className='list-item' onClick={() => handleTaskClick(task)}>
+                                  {task.name}
+                                  <span><CiEdit onClick={(e) => handleEditClick(e, task)} /></span>
+                                </div>
+                                )}
+                          </div>
+                        </Draggable>
+                      ))}
+                    </SortableContext>
+                  </Droppable>
+                  <button className='add-task' onClick={() => handleClickAddTask(section)}>Add task</button>
+                </div>
+              </li>
+            ))}
+            <div className='flat-button' onClick={() => handleClickAddSection()} key={projectState.sections.length}>Add Section</div>
+          </ol>
+        </div>
+        {showSectionActions &&
+          <SectionActions
+            section={showSectionActions}
+            closeModal={() => setShowSectionActions(false)}
+            sectionPosition={sectionPosition}
+            projectState={projectState}
+            setProjectState={setProjectState}
+            handleClickAddTask={handleClickAddTask}
+          />}
+        {showTask &&
+          <Task
+            task={showTask}
+            closeModal={() => setShowTask(false)}
+          />}
+        {showTaskActions &&
+          <TaskActions
+            task={showTaskActions}
+            closeModal={() => setShowTaskActions(false)}
+            sectionPosition={sectionPosition}
+            setIsTaskEditing={setIsTaskEditing}
+            projectState={projectState}
+            setProjectState={setProjectState}
+          />}
+      </DndContext>
     </>
   )
 }
