@@ -1,0 +1,176 @@
+.background {
+    position:fixed;
+    top:7%;
+    left:0;
+    margin:0;
+    width:100%;
+    height:100%;
+}
+
+.background::before {
+    content: '';
+    position: absolute;
+    background-image:url('https://www.colliers.com/-/media/images/colliers/asia/philippines/colliers-review/collierreview_hero_image_01312022_v2/hero_image_tondominium/hero_image_021522/hero_image_colliersviewpoint_022222.ashx?bid=0f5b3ed2a8de41f89e1a8d557e48f9f8');
+    background-size:cover;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity:0.8;
+    z-index: -1;
+}
+
+.mainBoard {
+    display:flex;
+    flex-direction:row;
+    align-items:flex-start;
+    gap:15px;
+    overflow-x:auto;
+    height:93%;
+    padding:0;
+    margin:0;
+    /* position:relative;
+    z-index:1; */
+}
+
+.section {
+    background-color:black;
+    color:white;
+    flex:none;
+    width:275px;
+    margin: 15px 5px;
+    border-radius:15px;
+    padding-bottom:15px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.section h3{
+    margin:5px;
+}
+
+.flat-button {
+    background-color:gray;
+    margin:15px 7.5px;
+    border-radius:5px;
+    opacity:0.6;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:30px;
+    border: 3px solid gray;
+    flex:none;
+    width:275px;
+}
+
+.flat-button:hover{
+    opacity: 1;
+}
+
+.list {
+    list-style-type: none;
+    width:90%;
+    margin:0px 10px;
+    text-align:center;
+}
+
+.list-task{
+    width:100%;
+}
+
+.list-item {
+    border-radius:5px;
+    height:30px;
+    width:(100% - 4px);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background-color:rgb(50, 49, 49);
+    border: 2px solid transparent;
+    margin: 5px 0px;
+    padding:0;
+}
+
+.add-task{
+    border-radius:5px;
+    cursor:pointer;
+    width:100%;
+    background-color:gray;
+    height:30px;
+    text-align:center;
+    border:none;
+}
+
+.add-task:hover{
+    background-color:white;
+}
+
+.list-item:hover {
+    border-color:white;
+    border-width:2px;
+    border-style:solid;
+}
+
+.section textarea {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    color:white;
+    margin:15px 0px;
+    width: 70%;
+    height:20px;
+    resize:none;
+    overflow:hidden;
+}
+
+.section-header{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:5px;
+    max-width:100%;
+    min-width:90%;
+    padding: 0px 10px;
+}
+
+.list-item span{
+    border-radius:50%;
+    text-align:center;
+    width:9%;
+    cursor:pointer;
+}
+
+.section-header span{
+    border-radius:50%;
+    text-align:center;
+    width:9%;
+    cursor:pointer;
+}
+
+.list-item span:hover{
+    background-color:grey;
+}
+
+.section-header span:hover{
+    background-color:grey;
+}
+  
+.section textarea:focus {
+    outline: none;
+    background-color:gray;
+    border-radius:5px;
+}
+
+.modal_backdrop {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(0, 0, 0, 0.4);
+    z-index:1;
+}
