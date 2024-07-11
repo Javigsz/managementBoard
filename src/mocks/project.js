@@ -11,12 +11,18 @@ export const project = {
         {
           id: '3564',
           name: 'Task 1',
-          desc: 'Task 1 description'
+          desc: 'Task 1 description',
+          editing: false,
+          color: undefined,
+          size: 'small'
         },
         {
           id: '3453456',
           name: 'Task 2',
-          desc: 'Task 2 description'
+          desc: 'Task 2 description',
+          editing: false,
+          color: undefined,
+          size: 'small'
         }
       ]
     },
@@ -28,22 +34,34 @@ export const project = {
         {
           id: '4455',
           name: 'Task 1',
-          desc: 'Task 1 description'
+          desc: 'Task 1 description',
+          editing: false,
+          color: undefined,
+          size: 'small'
         },
         {
           id: '665',
           name: 'Task 2',
-          desc: 'Task 2 description'
+          desc: 'Task 2 description',
+          editing: false,
+          color: undefined,
+          size: 'small'
         },
         {
           id: '34534',
           name: 'Task 3',
-          desc: 'Task 3 description'
+          desc: 'Task 3 description',
+          editing: false,
+          color: undefined,
+          size: 'small'
         },
         {
           id: '5',
           name: 'Task 4',
-          desc: 'Task 4 description'
+          desc: 'Task 4 description',
+          editing: false,
+          color: undefined,
+          size: 'small'
         }
       ]
     },

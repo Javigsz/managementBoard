@@ -6,8 +6,12 @@ const Droppable = (props) => {
     id: props.id
   })
 
+  const style = {
+    minHeight: props.isDragging ? '50px' : '0px'
+  }
+
   return (
-    <div className='droppable' ref={setNodeRef}>
+    <div className='droppable' style={style} ref={setNodeRef}>
       {props.children}
     </div>
   )

@@ -29,3 +29,26 @@
     z-index: 1;
     height: 100%;
 }
+
+.colors{
+    background-color:rgba(0,0,0);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    padding:10px;
+    border-radius:5px;
+}
+
+.task-color{
+    width: 80px;
+    height: 30px;
+    border-radius:5px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    margin: 5px 0px;
+    padding:0;
+}
+
+.task-color:hover{
+    border: 2px solid white;
+}

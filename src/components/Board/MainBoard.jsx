@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Task from './Task/Task'
 import TaskActions from './Task/TaskActions'
 import './index.css'
 import { CiEdit } from 'react-icons/ci'
 import { BsThreeDots } from 'react-icons/bs'
-import { DndContext } from '@dnd-kit/core'
+import { DndContext, useSensor, useSensors, PointerSensor } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import Droppable from './Droppable'
 import Draggable from './Task/Draggable'
@@ -15,11 +15,39 @@ const MainBoard = ({ projectState, setProjectState }) => {
   const [showTaskActions, setShowTaskActions] = useState(false)
   const [showSectionActions, setShowSectionActions] = useState(false)
   const [sectionPosition, setSectionPosition] = useState({ top: 0, left: 0 })
-  const [isTaskEditing, setIsTaskEditing] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const seeModalRef = useRef(true)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10
+      }
+    })
+  )
+
+  const handleMouseUp = (task) => {
+    if (seeModalRef.current) {
+      setShowTask(task)
+    }
+    seeModalRef.current = true
+  }
+
+  useEffect(() => {
+    if (isDragging) {
+      seeModalRef.current = false
+    }
+  }, [isDragging])
 
   const handleInputChange = (event, index) => {
     const newState = structuredClone(projectState)
     newState.sections[index].name = event.target.value
+    setProjectState(newState)
+  }
+
+  const handleInputChangeTask = (event, sectionIndex, taskIndex) => {
+    const newState = structuredClone(projectState)
+    newState.sections[sectionIndex].tasks[taskIndex].name = event.target.value
     setProjectState(newState)
   }
 
@@ -32,15 +60,24 @@ const MainBoard = ({ projectState, setProjectState }) => {
     }
   }
 
-  const handleTaskClick = (task) => {
-    setShowTask(task)
+  const handleOnBlurTask = (event, sectionIndex, taskIndex) => {
+    const newState = structuredClone(projectState)
+    newState.sections[sectionIndex].tasks[taskIndex].editing = false
+    if (event.target.value === '') {
+      const newName = 'Task'
+      newState.sections[sectionIndex].tasks[taskIndex].name = newName
+    }
+    setProjectState(newState)
   }
 
   const handleEditClick = (e, task) => {
     e.stopPropagation()
-    const rect = e.target.getBoundingClientRect()
-    setSectionPosition(rect)
-    setShowTaskActions(task)
+    if (seeModalRef.current) {
+      const rect = e.target.getBoundingClientRect()
+      setSectionPosition(rect)
+      setShowTaskActions(task)
+    }
+    seeModalRef.current = true
   }
 
   const handleClickSection = (e, section) => {
@@ -59,7 +96,10 @@ const MainBoard = ({ projectState, setProjectState }) => {
     const newTask = {
       id: crypto.randomUUID(),
       name: 'New task',
-      desc: 'Add description here'
+      desc: 'Add description here',
+      editing: false,
+      color: undefined,
+      size: 'small'
     }
 
     const newState = structuredClone(projectState)
@@ -153,7 +193,13 @@ const MainBoard = ({ projectState, setProjectState }) => {
 
   return (
     <>
-      <DndContext onDragOver={e => handleDragOver(e)}>
+      <DndContext
+        sensors={sensors}
+        onDragStart={() => setIsDragging(true)}
+        onDragOver={e => handleDragOver(e)}
+        onDragEnd={() => setIsDragging(false)}
+        onDragCancel={() => setIsDragging(false)}
+      >
         <div className='background'>
           <ol className='mainBoard'>
             {projectState.sections.map((section, index) => (
@@ -168,24 +214,39 @@ const MainBoard = ({ projectState, setProjectState }) => {
                   />
                   <span onClick={(e) => handleClickSection(e, section)}><BsThreeDots /></span>
                 </div>
-                <div className='list'>
-                  <Droppable id={section.id}>
+                <div className='list' style={{ backgroundColor: isDragging ? 'lightgray' : 'black' }}>
+                  <Droppable id={section.id} isDragging={isDragging}>
                     <SortableContext items={section.tasks} strategy={verticalListSortingStrategy}>
-                      {section.tasks.map(task => (
+                      {section.tasks.map((task, taskIndex) => (
                         <Draggable key={task.id} id={task.id}>
                           <div className='list-task'>
-                            {isTaskEditing
+                            {task.editing
                               ? (
                                 <input
-                                  type='text'
+                                  className='list-item-input'
+                                  autoFocus
                                   value={task.name}
-                                  onChange={(e) => handleTaskClick(e.target.value)}
+                                  onChange={event => handleInputChangeTask(event, index, taskIndex)}
+                                  onBlur={event => handleOnBlurTask(event, index, taskIndex)}
+                                  spellCheck='false'
+                                  style={{
+                                    backgroundColor: task.color ? task.color : '#323131',
+                                    height: task.size === 'large' ? '50px' : '30px',
+                                    fontSize: task.size === 'large' ? '20px' : '15px'
+                                  }}
                                 />
                                 )
                               : (
-                                <div className='list-item' onClick={() => handleTaskClick(task)}>
+                                <div
+                                  className='list-item'
+                                  onMouseUp={() => handleMouseUp(task)}
+                                  style={{
+                                    backgroundColor: task.color ? task.color : '#323131',
+                                    fontSize: task.size === 'large' ? '20px' : '15px'
+                                  }}
+                                >
                                   {task.name}
-                                  <span><CiEdit onClick={(e) => handleEditClick(e, task)} /></span>
+                                  <span onMouseUp={(e) => handleEditClick(e, task)}><CiEdit /></span>
                                 </div>
                                 )}
                           </div>
@@ -219,7 +280,6 @@ const MainBoard = ({ projectState, setProjectState }) => {
             task={showTaskActions}
             closeModal={() => setShowTaskActions(false)}
             sectionPosition={sectionPosition}
-            setIsTaskEditing={setIsTaskEditing}
             projectState={projectState}
             setProjectState={setProjectState}
           />}
