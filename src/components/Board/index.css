@@ -83,32 +83,40 @@
 
 .list-item {
     border-radius:5px;
-    height:30px;
-    width:(100% - 4px);
+    min-height:30px;
+    /* width:100%; */
     cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:space-between;
     /* background-color:rgb(50, 49, 49); */
     border: 2px solid transparent;
-    margin: 5px 0px;
     padding:0;
+    margin: 5px 0px;
 }
 
 .list-item-input{
+    display:flex;
     border-radius:5px;
-    border:inherit;
-    resize: none;
-    height:30px;
-    width:100%;
-    cursor:text;
-    /* background-color:rgb(50, 49, 49); */
-    color:white;
     margin: 5px 0px;
-    padding:0;
-    font-family: inherit;
-    font-size: inherit;
+    padding: 0px;
+    width:243.5px;
+    border: 2px solid transparent;
+    color:white;
+    resize:none;
+    overflow:hidden;
 }
+
+.list-item p {
+    margin:0;
+    padding:0;
+    width:80%;
+    text-overflow: ellipsis;
+    overflow-x:hidden;
+    overflow-y:auto;
+    text-align:start;
+}
+
 
 .add-task{
     border-radius:5px;
@@ -130,7 +138,14 @@
     border-style:solid;
 }
 
-.section textarea {
+.list-item-input:focus {
+    border-color:white;
+    border-width:2px;
+    border-style:solid;
+    outline:none;
+}
+
+.section-title {
     padding: 0;
     border: none;
     background-color: transparent;
@@ -189,19 +204,4 @@
     height:100%;
     background-color:rgba(0, 0, 0, 0.4);
     z-index:1;
-}
-
-.list textarea {
-    padding: 0;
-    border: 2px solid white;
-    background-color: transparent;
-    color:white;
-    width: 100%;
-    overflow:hidden;
-}
-
-.list textarea:focus {
-    outline: none;
-    background-color:gray;
-    border-radius:5px;
 }

@@ -92,6 +92,11 @@ const MainBoard = ({ projectState, setProjectState }) => {
     e.target.style.height = `${e.target.scrollHeight}px`
   }
 
+  const handleKeyDownTask = (e) => {
+    e.target.style.height = '30px'
+    e.target.style.height = `${e.target.scrollHeight}px`
+  }
+
   const handleClickAddTask = (section) => {
     const newTask = {
       id: crypto.randomUUID(),
@@ -206,6 +211,7 @@ const MainBoard = ({ projectState, setProjectState }) => {
               <li className='section' key={section.id}>
                 <div className='section-header'>
                   <textarea
+                    className='section-title'
                     value={section.name}
                     onChange={event => handleInputChange(event, index)}
                     onBlur={event => handleOnBlur(event, index)}
@@ -222,16 +228,17 @@ const MainBoard = ({ projectState, setProjectState }) => {
                           <div className='list-task'>
                             {task.editing
                               ? (
-                                <input
+                                <textarea
                                   className='list-item-input'
                                   autoFocus
                                   value={task.name}
+                                  onInput={(e) => handleKeyDownTask(e)}
+                                  onFocus={(e) => handleKeyDownTask(e)}
                                   onChange={event => handleInputChangeTask(event, index, taskIndex)}
                                   onBlur={event => handleOnBlurTask(event, index, taskIndex)}
                                   spellCheck='false'
                                   style={{
                                     backgroundColor: task.color ? task.color : '#323131',
-                                    height: task.size === 'large' ? '50px' : '30px',
                                     fontSize: task.size === 'large' ? '20px' : '15px'
                                   }}
                                 />
@@ -245,7 +252,7 @@ const MainBoard = ({ projectState, setProjectState }) => {
                                     fontSize: task.size === 'large' ? '20px' : '15px'
                                   }}
                                 >
-                                  {task.name}
+                                  <p>{task.name}</p>
                                   <span onMouseUp={(e) => handleEditClick(e, task)}><CiEdit /></span>
                                 </div>
                                 )}
