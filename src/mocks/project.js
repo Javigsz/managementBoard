@@ -14,7 +14,9 @@ export const project = {
           desc: 'Task 1 description',
           editing: false,
           color: undefined,
-          size: 'small'
+          size: 'small',
+          start: null,
+          end: null
         },
         {
           id: '3453456',
@@ -22,7 +24,9 @@ export const project = {
           desc: 'Task 2 description',
           editing: false,
           color: undefined,
-          size: 'small'
+          size: 'small',
+          start: null,
+          end: null
         }
       ]
     },
@@ -37,7 +41,9 @@ export const project = {
           desc: 'Task 1 description',
           editing: false,
           color: undefined,
-          size: 'small'
+          size: 'small',
+          start: null,
+          end: null
         },
         {
           id: '665',
@@ -45,7 +51,9 @@ export const project = {
           desc: 'Task 2 description',
           editing: false,
           color: undefined,
-          size: 'small'
+          size: 'small',
+          start: null,
+          end: null
         },
         {
           id: '34534',
@@ -53,7 +61,9 @@ export const project = {
           desc: 'Task 3 description',
           editing: false,
           color: undefined,
-          size: 'small'
+          size: 'small',
+          start: null,
+          end: null
         },
         {
           id: '5',
@@ -61,7 +71,9 @@ export const project = {
           desc: 'Task 4 description',
           editing: false,
           color: undefined,
-          size: 'small'
+          size: 'small',
+          start: null,
+          end: null
         }
       ]
     },

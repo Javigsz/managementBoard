@@ -26,9 +26,9 @@ const MainBoard = ({ projectState, setProjectState }) => {
     })
   )
 
-  const handleMouseUp = (task) => {
+  const handleMouseUp = (taskIndex, sectionIndex) => {
     if (seeModalRef.current) {
-      setShowTask(task)
+      setShowTask({ task: taskIndex, section: sectionIndex })
     }
     seeModalRef.current = true
   }
@@ -104,7 +104,9 @@ const MainBoard = ({ projectState, setProjectState }) => {
       desc: 'Add description here',
       editing: false,
       color: undefined,
-      size: 'small'
+      size: 'small',
+      start: null,
+      end: null
     }
 
     const newState = structuredClone(projectState)
@@ -246,7 +248,7 @@ const MainBoard = ({ projectState, setProjectState }) => {
                               : (
                                 <div
                                   className='list-item'
-                                  onMouseUp={() => handleMouseUp(task)}
+                                  onMouseUp={() => handleMouseUp(taskIndex, index)}
                                   style={{
                                     backgroundColor: task.color ? task.color : '#323131',
                                     fontSize: task.size === 'large' ? '20px' : '15px'
@@ -280,6 +282,9 @@ const MainBoard = ({ projectState, setProjectState }) => {
         {showTask &&
           <Task
             task={showTask}
+            projectState={projectState}
+            setProjectState={setProjectState}
+            handleKeyDownTask={handleKeyDownTask}
             closeModal={() => setShowTask(false)}
           />}
         {showTaskActions &&

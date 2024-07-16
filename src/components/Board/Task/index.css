@@ -1,3 +1,7 @@
+.modal_backdrop{
+    overflow:auto;
+}
+
 .task-action, .section-action{
     /* background-color: white; */
     border-width: 0;
@@ -11,14 +15,98 @@
 .task_modal {
     position: absolute;
     background-color: gray;
-    position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 300px;
-    height: 200px;
     border-radius: 5px;
-    padding: 15px;
+    width:400px;
+    color:white;
+}
+
+.task-button{
+    background-color: white;
+    border-width: 0;
+    border: none;
+    margin: 0px 3px;
+    border-radius:5px;
+    height: 30px;
+    cursor:pointer;
+}
+
+.task-name-input{
+    display:flex;
+    color:white;
+    background-color:transparent;
+    outline:none;
+    border:none;
+    resize:none;
+    font-size:24px;
+    overflow:hidden;
+    margin-top: 10px;
+    margin-left: 15px;
+    margin-right: 15px;
+    height:30px;
+    width:93%;
+}
+
+.task-name-input:focus{
+    background-color:#323131;
+    border-radius:5px;
+}
+
+.task-desc-input{
+    display:flex;
+    color:white;
+    background-color:transparent;
+    outline:none;
+    border:none;
+    resize:none;
+    font-size:15px;
+    overflow:hidden;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    margin-left: 15px;
+    margin-right: 15px;
+    width:93%;
+    height:40px;
+}
+
+.task-desc-input:focus{
+    background-color:#323131;
+    border-radius:5px;
+}
+
+.task-name-section{
+    font-size:10px;
+    margin:0px 15px 15px 15px;
+}
+
+.task-name-section p{
+    margin:0px 20px;
+}
+
+.task-users-section{
+    display:flex;
+    flex-direction: column;
+    margin:0px 15px 15px 15px;
+}
+
+.task-users-section select{
+    margin-left: 10px;
+    width: 50%;
+    text-align:start;
+    height: 30px;
+    border-radius:5px;
+    background-color: white;
+}
+
+.task-dates-section{
+    margin:0px 15px 15px 15px;
+}
+
+.users-list{
+    display:flex;
+    margin-left:20px;
 }
 
 .droppable {
@@ -37,6 +125,17 @@
     gap: 5px;
     padding:10px;
     border-radius:5px;
+    position: absolute;
+}
+
+.task-users-section button{
+    margin-left: 20px;
+    width: 20%;
+    text-align:start;
+    height: 30px;
+    border-radius:5px;
+    background-color: white;
+    border-width: 0;
 }
 
 .task-color{
@@ -49,6 +148,44 @@
     padding:0;
 }
 
+.task_actions{
+    display:flex;
+    justify-content:center;
+    width:100%;
+    padding: 20px 0px;
+}
+
 .task-color:hover{
     border: 2px solid white;
+}
+
+.color{
+    background-color:#323131;
+    width:100%;
+    height:80px;
+    border-radius: 5px 5px 0px 0px;
+    position: relative;
+}
+
+.task-dates-section h5{
+    margin: 10px 20px;
+}
+
+.datepicker{
+    margin: 5px 20px;
+}
+
+.change-color-button{
+    position:absolute;
+    top: 0;
+    right: 0;
+    background-color:transparent;
+    border:none;
+    margin: 5px;
+    margin-right:10px;
+    width: 20px;
+    height: 20px;
+    cursor:pointer;
+    border-radius: 50%;
+    color:white;
 }
