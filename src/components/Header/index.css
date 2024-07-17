@@ -56,6 +56,16 @@
     justify-content: center;
     align-items: center;
     margin:5px;
+    position: absolute;
+    top: 7px;
+    right: 0;
+    transition: right 0.3s ease-in-out;
+}
+
+.thin-line {
+    background-color: white;
+    width: 100%;
+    height: 1px;
 }
   
 .filter {
@@ -63,4 +73,158 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+.dropdown-menu {
+    display:flex;
+    flex-direction:column;
+    justify-content: start;
+    align-items: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    top: 0;
+    right: -270px;
+    width: 270px;
+    height: 100%;
+    background-color: #333;
+    color: white;
+    transition: right 0.3s ease-in-out;
+    z-index: 1000;
+    border-radius:5px;
+    overflow: auto;
+}
+  
+.dropdown-menu.open {
+    right: 0;
+}
+
+.menu-content {
+    margin-top: 40px;
+    
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+}
+
+.li-menu {
+    margin: 20px 0;
+}
+
+.menu-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px;
+    width:100%;
+    border-radius:5px;
+    text-decoration: none;
+}
+
+.menu-button:hover {
+    background-color:black;
+}
+
+.close-button{
+    background-color: black;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px;
+    width:100%;
+    border-radius:5px;
+    text-decoration: none;
+}
+
+.close-button:hover {
+    background-color: white;
+    color: black;
+}
+
+.user-item-container {
+    display:flex;
+    flex-direction:row;
+    justify-content:space-evenly;
+    align-items:center;
+    max-width:180px;
+    margin: 0;
+    padding: 10;
+    border-radius:5px;
+    text-decoration: none;
+}
+
+.menu-button.open{
+    background-color: black;
+}
+
+.user-item-container img {
+    width: 28px;
+    height: 28px;
+    border-radius:50%;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+
+.user-list {
+    
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    
+}
+
+.user-item {
+    color: white;
+    font-size: 12px;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    border-radius:5px;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.new-user-form {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    width:180px;
+    padding:10px;
+}
+
+.new-user-form label{
+    font-size: 12px;
+    margin: 5px 0px;
+}
+
+.new-user-form button {
+    background-color: black;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px;
+    width:70%;
+    border-radius:5px;
+    padding:0px;
+    margin-top:10px;
+    text-decoration: none;
+}
+
+.new-user-form button:hover {
+    background-color: white;
+    color: black;
 }
