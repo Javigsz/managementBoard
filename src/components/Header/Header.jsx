@@ -42,7 +42,7 @@ const Header = ({ projectState, setProjectState }) => {
           </button>
         </div>
       </div>
-      <Menu openMenu={openMenu} setOpenMenu={setOpenMenu} projectState={projectState} />
+      <Menu openMenu={openMenu} setOpenMenu={setOpenMenu} projectState={projectState} setProjectState={setProjectState} />
     </>
   )
 }

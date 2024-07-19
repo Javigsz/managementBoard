@@ -108,6 +108,12 @@
 .menu-list {
     list-style: none;
     padding: 0;
+    margin: 0;
+    /* display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:center;
+    gap:0; */
 }
 
 .li-menu {
@@ -155,10 +161,15 @@
     justify-content:space-evenly;
     align-items:center;
     max-width:180px;
-    margin: 0;
+    min-width:160px;
+    margin: 0 0 3px 0;
     padding: 10;
     border-radius:5px;
     text-decoration: none;
+}
+
+.user-item-container.marked {
+    background-color: black;
 }
 
 .menu-button.open{
@@ -172,6 +183,12 @@
     margin: 0;
     padding: 0;
     text-decoration: none;
+}
+
+.user-item-container:hover {
+    opacity: 0.5;
+    cursor:pointer;
+
 }
 
 .user-list {
@@ -209,7 +226,7 @@
     margin: 5px 0px;
 }
 
-.new-user-form button {
+.mini-menu-button {
     background-color: black;
     border: none;
     color: white;
@@ -224,7 +241,7 @@
     text-decoration: none;
 }
 
-.new-user-form button:hover {
+.mini-menu-button:hover {
     background-color: white;
     color: black;
 }

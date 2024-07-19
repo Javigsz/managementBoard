@@ -1,15 +1,27 @@
 import React, { useState } from 'react'
 
-const Userform = () => {
+const Userform = ({ projectState, setProjectState }) => {
   const [avatar, setAvatar] = useState('')
   const [username, setUsername] = useState('')
   const [fullName, setFullName] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Aquí podrías validar los datos antes de agregar el usuario
-    // addUser({ avatar, username, fullName })
-    // Limpiar el formulario después de enviar
+    if (projectState.users.find(user => user.username === username)) {
+      console.log('Username already exists')
+    } else {
+      if (avatar === '') setAvatar(undefined)
+      const newUser = {
+        id: crypto.randomUUID(),
+        avatar,
+        username,
+        name: fullName,
+        tasks: []
+      }
+
+      const newUsers = [...projectState.users, newUser]
+      setProjectState({ ...projectState, users: newUsers })
+    }
     setAvatar('')
     setUsername('')
     setFullName('')
@@ -45,7 +57,7 @@ const Userform = () => {
           required
         />
 
-        <button type='submit'>Add User</button>
+        <button className='mini-menu-button' type='submit'>Add User</button>
       </form>
       <div className='thin-line' />
     </div>
