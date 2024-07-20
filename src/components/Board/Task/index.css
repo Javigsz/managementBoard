@@ -107,6 +107,10 @@
 .users-list{
     display:flex;
     margin-left:20px;
+    margin-right:20px;
+    max-width: 100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .droppable {
@@ -188,4 +192,39 @@
     cursor:pointer;
     border-radius: 50%;
     color:white;
+}
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+}
+  
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+  
+.delete-icon {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+  
+.avatar-container:hover .delete-icon {
+    opacity: 1;
+}
+
+.delete-icon:hover {
+    cursor:pointer;
 }

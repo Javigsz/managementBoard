@@ -19,6 +19,7 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
     zIndex: 1,
     color: 'white'
   }
+  const [selectedValue, setSelectedValue] = useState('')
   const [showColors, setShowColors] = useState(false)
   const handleEditTaskName = (e) => {
     const newState = structuredClone(projectState)
@@ -109,6 +110,22 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
     setShowColors(false)
   }
 
+  const handleSubmitAddUser = (e) => {
+    e.preventDefault()
+    if (selectedValue === '' || selectedValue === 0) return
+    const index = parseInt(selectedValue) - 1
+    const newState = structuredClone(projectState)
+    newState.users[index].tasks = [...newState.users[index].tasks, projectState.sections[task.section].tasks[task.task].id]
+    setProjectState(newState)
+    setSelectedValue(0)
+  }
+
+  const handleDeleteUser = (index) => {
+    const newState = structuredClone(projectState)
+    newState.users[index].tasks = newState.users[index].tasks.filter(taskd => taskd !== projectState.sections[task.section].tasks[task.task].id)
+    setProjectState(newState)
+  }
+
   return (
     <>
       <div className='modal_backdrop' onClick={() => closeModal()}>
@@ -154,19 +171,25 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
           <div className='task-users-section'>
             <h4><FaUser />  Users</h4>
             <div className='users-list'>
-              <p>Lista de usuarios xd</p>
+              {projectState.users.map((user, index) => (
+                user.tasks.includes(projectState.sections[task.section].tasks[task.task].id) && (
+                  <div className='avatar-container' key={user.id}>
+                    <img className='avatar' src={user.avatar ? user.avatar : '/default-user.jpg'} alt={user.username} />
+                    <div className='delete-icon' onClick={() => handleDeleteUser(index)}>✖</div>
+                  </div>
+                )
+              ))}
             </div>
             <div>
-              <button className='task-button'>Add User</button>
-              <select name='pets' id='pet-select'>
-                <option value=''>Select User</option>
-                <option value='dog'>Dog</option>
-                <option value='cat'>Cat</option>
-                <option value='hamster'>Hamster</option>
-                <option value='parrot'>Parrot</option>
-                <option value='spider'>Spider</option>
-                <option value='goldfish'>Goldfish</option>
-              </select>
+              <form onSubmit={(e) => handleSubmitAddUser(e)}>
+                <button type='submit' className='task-button'>Add User</button>
+                <select name='users' id='user-select' value={selectedValue} onChange={(e) => setSelectedValue(e.target.value)}>
+                  <option value=''>Select User</option>
+                  {projectState.users.map(user => (
+                    <option key={user.id} value={user.id}>{user.username}</option>
+                  ))}
+                </select>
+              </form>
             </div>
           </div>
           <div className='task-dates-section'>
