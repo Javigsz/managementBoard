@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import Userform from './Userform'
+import { project } from '../../mocks/project'
 
 const Menu = ({ openMenu, setOpenMenu, projectState, setProjectState }) => {
   const [showUsers, setShowUsers] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [showDeleteUser, setShowDeleteUser] = useState(false)
+  const [showChangeImage, setShowChangeImage] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false)
 
   const handleClickUser = (id) => {
     if (id === showDeleteUser) {
@@ -28,6 +31,12 @@ const Menu = ({ openMenu, setOpenMenu, projectState, setProjectState }) => {
     }
   }
 
+  const handleConfirmReset = () => {
+    console.log('asdfasdf')
+    setProjectState(project)
+    setConfirmReset(false)
+  }
+
   return (
     <>
       <div className={`dropdown-menu ${openMenu ? 'open' : ''}`}>
@@ -35,7 +44,13 @@ const Menu = ({ openMenu, setOpenMenu, projectState, setProjectState }) => {
         <div className='thin-line' />
         <div className='menu-content'>
           <ul className='menu-list'>
-            <li className='li-menu'><button className='menu-button'>Change background image</button></li>
+            <li className='li-menu'><button className={`menu-button ${showChangeImage ? 'open' : ''}`} onClick={() => setShowChangeImage(!showChangeImage)}>Change background image</button></li>
+            {showChangeImage &&
+              <input
+                className='image-input'
+                type='text'
+                onChange={(e) => setProjectState({ ...projectState, backgroundImage: e.target.value })}
+              />}
             <li className='li-menu'><button onClick={() => handleClickUsersList()} className={`menu-button ${showUsers ? 'open' : ''}`}>See Users List</button></li>
             {showUsers && (
               <ul className='user-list'>
@@ -52,7 +67,15 @@ const Menu = ({ openMenu, setOpenMenu, projectState, setProjectState }) => {
             {showDeleteUser && <button className='mini-menu-button' onClick={() => handleDeleteClick()}>Delete user</button>}
             <li className='li-menu'><button onClick={() => setShowForm(!showForm)} className={`menu-button ${showForm ? 'open' : ''}`}>New user</button></li>
             {showForm && <Userform projectState={projectState} setProjectState={setProjectState} />}
-            <li className='li-menu'><button className='menu-button'>Restart project</button></li>
+            <li className='li-menu'><button className={`menu-button ${confirmReset ? 'open' : ''}`} onClick={() => setConfirmReset(!confirmReset)}>Restart project</button></li>
+            {confirmReset &&
+              <div className='confirm-reset'>
+                <p>Are you sure you want to reset the project?</p>
+                <div className='reset-buttons'>
+                  <button className='reset-button' onClick={() => handleConfirmReset()}>Reset</button>
+                  <button className='cancel-button' onClick={() => setConfirmReset(false)}>Cancel</button>
+                </div>
+              </div>}
             <li className='li-menu'><button className='close-button' onClick={() => setOpenMenu(false)}>Close</button></li>
           </ul>
         </div>

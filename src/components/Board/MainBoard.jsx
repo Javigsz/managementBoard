@@ -87,10 +87,10 @@ const MainBoard = ({ projectState, setProjectState }) => {
     setShowSectionActions(section)
   }
 
-  const handleKeyDown = (e) => {
-    e.target.style.height = '20px'
-    e.target.style.height = `${e.target.scrollHeight}px`
-  }
+  //   const handleKeyDown = (e) => {
+  //     e.target.style.height = '20px'
+  //     e.target.style.height = `${e.target.scrollHeight}px`
+  //   }
 
   const handleKeyDownTask = (e) => {
     e.target.style.height = '30px'
@@ -207,7 +207,13 @@ const MainBoard = ({ projectState, setProjectState }) => {
         onDragEnd={() => setIsDragging(false)}
         onDragCancel={() => setIsDragging(false)}
       >
-        <div className='background'>
+        <div
+          className='background' style={{
+            '&::before': {
+              backgroundImage: `url(${projectState.backgroundImage})`
+            }
+          }}
+        >
           <ol className='mainBoard'>
             {projectState.sections.map((section, index) => (
               <li className='section' key={section.id}>
@@ -217,7 +223,7 @@ const MainBoard = ({ projectState, setProjectState }) => {
                     value={section.name}
                     onChange={event => handleInputChange(event, index)}
                     onBlur={event => handleOnBlur(event, index)}
-                    onInput={(e) => handleKeyDown(e)}
+                    // onInput={(e) => handleKeyDown(e)}
                     spellCheck='false'
                   />
                   <span onClick={(e) => handleClickSection(e, section)}><BsThreeDots /></span>
@@ -234,8 +240,8 @@ const MainBoard = ({ projectState, setProjectState }) => {
                                   className='list-item-input'
                                   autoFocus
                                   value={task.name}
-                                  onInput={(e) => handleKeyDownTask(e)}
-                                  onFocus={(e) => handleKeyDownTask(e)}
+                                //   onInput={(e) => handleKeyDownTask(e)}
+                                //   onFocus={(e) => handleKeyDownTask(e)}
                                   onChange={event => handleInputChangeTask(event, index, taskIndex)}
                                   onBlur={event => handleOnBlurTask(event, index, taskIndex)}
                                   spellCheck='false'

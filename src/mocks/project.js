@@ -2,6 +2,7 @@ export const project = {
   id: '1',
   name: 'Project 1',
   desc: 'Project 1 description',
+  backgroundImage: '/default-project.jpg',
   sections: [
     {
       id: '1',

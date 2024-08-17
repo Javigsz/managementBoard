@@ -10,7 +10,7 @@
 .background::before {
     content: '';
     position: absolute;
-    background-image:url('https://www.colliers.com/-/media/images/colliers/asia/philippines/colliers-review/collierreview_hero_image_01312022_v2/hero_image_tondominium/hero_image_021522/hero_image_colliersviewpoint_022222.ashx?bid=0f5b3ed2a8de41f89e1a8d557e48f9f8');
+    background-image:url('/default-project.jpg');
     background-size:cover;
     top: 0;
     left: 0;
@@ -101,10 +101,12 @@
     margin: 5px 0px;
     padding: 0px;
     width:243.5px;
+    min-height:30px;
     border: 2px solid transparent;
     color:white;
     resize:none;
-    overflow:hidden;
+    /* overflow:hidden; */
+    field-sizing: content;
 }
 
 .list-item p {
@@ -151,8 +153,9 @@
     background-color: transparent;
     color:white;
     margin:15px 0px;
-    width: 70%;
-    height:20px;
+    width: 200px;
+    /* height:20px; */
+    field-sizing: content;
     resize:none;
     overflow:hidden;
 }

@@ -29,7 +29,7 @@ const Userform = ({ projectState, setProjectState }) => {
 
   return (
     <div>
-      <form className='new-user-form' onSubmit={handleSubmit}>
+      <form id='new-user-form' className='new-user-form' onSubmit={handleSubmit}>
         <div className='thin-line' />
         <label htmlFor='avatar'>Avatar URL:</label>
         <input

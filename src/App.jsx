@@ -3,18 +3,21 @@ import Header from './components/Header/Header'
 import MainBoard from './components/Board/MainBoard'
 import { project } from './mocks/project'
 import { useState } from 'react'
+import { FiltersProvider } from './context/filters'
 
 function App () {
   const [projectState, setProjectState] = useState(project)
   return (
     <>
-      <header>
-        <Header projectState={projectState} setProjectState={setProjectState} />
-      </header>
-      <MainBoard
-        projectState={projectState}
-        setProjectState={setProjectState}
-      />
+      <FiltersProvider>
+        <header>
+          <Header projectState={projectState} setProjectState={setProjectState} />
+        </header>
+        <MainBoard
+          projectState={projectState}
+          setProjectState={setProjectState}
+        />
+      </FiltersProvider>
     </>
   )
 }

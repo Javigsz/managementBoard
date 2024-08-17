@@ -36,10 +36,10 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
     setProjectState(newState)
   }
 
-  const handleKeyDownTask = (e) => {
-    e.target.style.height = '20px'
-    e.target.style.height = `${e.target.scrollHeight}px`
-  }
+  //   const handleKeyDownTask = (e) => {
+  //     e.target.style.height = '20px'
+  //     e.target.style.height = `${e.target.scrollHeight}px`
+  //   }
 
   const handleEditTaskDesc = (e) => {
     const newState = structuredClone(projectState)
@@ -150,8 +150,9 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
           <textarea
             className='task-name-input'
             value={projectState.sections[task.section].tasks[task.task].name}
-            onFocus={(e) => handleKeyDownTask(e)}
-            onInput={(e) => handleKeyDownTask(e)}
+            // onFocus={(e) => handleKeyDownTask(e)}
+            // onInput={(e) => handleKeyDownTask(e)}
+            style={{ fieldsyzing: 'content' }}
             onChange={e => handleEditTaskName(e)}
             onBlur={e => handleOnBlurTaskd(e)}
             spellCheck='false'
@@ -162,8 +163,8 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
           <textarea
             className='task-desc-input'
             value={projectState.sections[task.section].tasks[task.task].desc}
-            onFocus={(e) => handleKeyDownTask(e)}
-            onInput={(e) => handleKeyDownTask(e)}
+            // onFocus={(e) => handleKeyDownTask(e)}
+            // onInput={(e) => handleKeyDownTask(e)}
             onChange={e => handleEditTaskDesc(e)}
             onBlur={e => handleOnBlurTaskdDesc(e)}
             spellCheck='false'
