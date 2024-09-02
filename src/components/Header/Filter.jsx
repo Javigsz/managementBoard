@@ -7,8 +7,25 @@ const colorArray = ['#1B59CA', '#7C5E07', '#A04700', '#4F6A24', '#8F3E71', '#A82
 
 const Filter = ({ closeModal, projectState }) => {
   const { filters, setFilters } = useContext(FiltersContext)
-  const handleClickUser = userId => {
-    window.alert('hola')
+  const handleClickUser = (event, userId) => {
+    if (event.target.checked) {
+      setFilters({ ...filters, users: [...filters.users, userId] })
+    } else {
+      setFilters({ ...filters, users: filters.users.filter(user => user !== userId) })
+    }
+  }
+
+  const handleClickColor = (event, color) => {
+    if (event.target.checked) {
+      setFilters({ ...filters, color: [...filters.color, color] })
+    } else {
+      setFilters({ ...filters, color: filters.color.filter(c => c !== color) })
+    }
+  }
+  const handleChangeDate = (event) => {
+    if (!event.target.checked) {
+      setFilters({ ...filters, endDate: null })
+    }
   }
   return (
     <>
@@ -23,8 +40,8 @@ const Filter = ({ closeModal, projectState }) => {
                 <input
                   type='checkbox'
                   id={user.id}
-                  value='first_checkbox'
-                  onClick={() => handleClickUser(user.id)}
+                  onChange={(event) => handleClickUser(event, user.id)}
+                  checked={filters.users.includes(user.id)}
                 />
                 {user.name}
                 <br />
@@ -40,8 +57,8 @@ const Filter = ({ closeModal, projectState }) => {
                 <input
                   type='checkbox'
                   id={color}
-                  value='first_checkbox'
-                //   onClick={() => setProjectState({ ...projectState, color })}
+                  checked={filters.color.includes(color)}
+                  onChange={(event) => handleClickColor(event, color)}
                 />
                 <div className='color-filter' style={{ backgroundColor: color }} />
                 <br />
@@ -52,18 +69,21 @@ const Filter = ({ closeModal, projectState }) => {
         <h5>Dates</h5>
         <ul>
           <li>
-            <label htmlFor='start-date'>
-              <input type='checkbox' id='start-date' /> Ends Before:
-            </label>
-            <DatePicker className='datepicker' selected={filters.startDate} onChange={(date) => setFilters({ ...filters, startDate: date })} />
             <label htmlFor='end-date'>
-              <input type='checkbox' id='end-date' /> Ends After:
+              <input
+                type='checkbox'
+                id='end-date'
+                checked={filters.endDate !== null}
+                onChange={(event) => handleChangeDate(event)}
+              />
+              Ends Before:
             </label>
             <DatePicker className='datepicker' selected={filters.endDate} onChange={(date) => setFilters({ ...filters, endDate: date })} />
           </li>
         </ul>
+        <button className='clear-button' style={{ width: '100px' }} onClick={() => setFilters({ ...filters, users: [], color: [], endDate: null })}>Clear</button>
         <div className='button-container'>
-          <button className='close-button' style={{ width: '200px' }} onClick={closeModal}>Close</button>
+          <button className='close-button' style={{ width: '100px' }} onClick={closeModal}>Close</button>
         </div>
       </div>
     </>

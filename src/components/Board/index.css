@@ -95,6 +95,10 @@
     margin: 5px 0px;
 }
 
+.list-item.filtered {
+    border: 2px solid white;
+}
+
 .list-item-input{
     display:flex;
     border-radius:5px;

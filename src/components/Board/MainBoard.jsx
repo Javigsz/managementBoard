@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import Task from './Task/Task'
 import TaskActions from './Task/TaskActions'
 import './index.css'
@@ -9,6 +9,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import Droppable from './Droppable'
 import Draggable from './Task/Draggable'
 import SectionActions from './SectionActions'
+import { FiltersContext } from '../../context/filters'
 
 const MainBoard = ({ projectState, setProjectState }) => {
   const [showTask, setShowTask] = useState(false)
@@ -17,6 +18,7 @@ const MainBoard = ({ projectState, setProjectState }) => {
   const [sectionPosition, setSectionPosition] = useState({ top: 0, left: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const seeModalRef = useRef(true)
+  const { filters } = useContext(FiltersContext)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -103,7 +105,7 @@ const MainBoard = ({ projectState, setProjectState }) => {
       name: 'New task',
       desc: 'Add description here',
       editing: false,
-      color: undefined,
+      color: '#323131',
       size: 'small',
       start: null,
       end: null
@@ -198,6 +200,23 @@ const MainBoard = ({ projectState, setProjectState }) => {
     }
   }
 
+  const filteredUser = (task) => {
+    return projectState.users.some(user =>
+      user.tasks.includes(task.id) && filters.users.includes(user.id)
+    )
+  }
+
+  const filteredColor = (task) => {
+    return filters.color.includes(task.color)
+  }
+
+  const filteredDate = (task) => {
+    if (task.end !== null) {
+      return task.end <= filters.endDate
+    }
+    return false
+  }
+
   return (
     <>
       <DndContext
@@ -253,7 +272,7 @@ const MainBoard = ({ projectState, setProjectState }) => {
                                 )
                               : (
                                 <div
-                                  className='list-item'
+                                  className={`list-item ${(filteredColor(task) || filteredUser(task) || filteredDate(task)) ? 'filtered' : ''}`}
                                   onMouseUp={() => handleMouseUp(taskIndex, index)}
                                   style={{
                                     backgroundColor: task.color ? task.color : '#323131',

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import tinycolor from 'tinycolor2'
 
 const TaskActions = ({ task, closeModal, sectionPosition, projectState, setProjectState }) => {
   const [showColors, setShowColors] = useState(false)
@@ -82,7 +83,7 @@ const TaskActions = ({ task, closeModal, sectionPosition, projectState, setProje
     newState.sections.forEach(section => {
       section.tasks.forEach(taskToEdit => {
         if (taskToEdit.id === task.id) {
-          taskToEdit.color = e.target.style.backgroundColor
+          taskToEdit.color = tinycolor(e.target.style.backgroundColor).toHexString().toUpperCase()
         }
       })
     })

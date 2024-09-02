@@ -14,7 +14,7 @@ export const project = {
           name: 'Task 1',
           desc: 'Task 1 description',
           editing: false,
-          color: undefined,
+          color: '#323131',
           size: 'small',
           start: null,
           end: null
@@ -24,7 +24,7 @@ export const project = {
           name: 'Task 2',
           desc: 'Task 2 description',
           editing: false,
-          color: undefined,
+          color: '#323131',
           size: 'small',
           start: null,
           end: null
@@ -41,7 +41,7 @@ export const project = {
           name: 'Task 1',
           desc: 'Task 1 description',
           editing: false,
-          color: undefined,
+          color: '#323131',
           size: 'small',
           start: null,
           end: null
@@ -51,7 +51,7 @@ export const project = {
           name: 'Task 2',
           desc: 'Task 2 description',
           editing: false,
-          color: undefined,
+          color: '#323131',
           size: 'small',
           start: null,
           end: null
@@ -61,7 +61,7 @@ export const project = {
           name: 'Task 3',
           desc: 'Task 3 description',
           editing: false,
-          color: undefined,
+          color: '#323131',
           size: 'small',
           start: null,
           end: null
@@ -71,7 +71,7 @@ export const project = {
           name: 'Task 4',
           desc: 'Task 4 description',
           editing: false,
-          color: undefined,
+          color: '#323131',
           size: 'small',
           start: null,
           end: null

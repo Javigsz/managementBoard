@@ -7,7 +7,6 @@ export const FiltersContext = createContext()
 export function FiltersProvider ({ children }) {
   const [filters, setFilters] = useState({
     users: [],
-    startDate: null,
     endDate: null,
     color: []
   })

@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker'
 import { MdOutlineDateRange } from 'react-icons/md'
 import 'react-datepicker/dist/react-datepicker.css'
 import { IoIosColorPalette } from 'react-icons/io'
+import tinycolor from 'tinycolor2'
 
 const Task = ({ task, closeModal, projectState, setProjectState }) => {
   const modalStyle = {
@@ -58,12 +59,28 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
 
   const setStartDate = (date) => {
     const newState = structuredClone(projectState)
+
+    const endDate = newState.sections[task.section].tasks[task.task].end
+
+    if (endDate && new Date(date) > new Date(endDate)) {
+      window.alert('Start date cannot be after end date.')
+      return
+    }
+
     newState.sections[task.section].tasks[task.task].start = date
     setProjectState(newState)
   }
 
   const setEndDate = (date) => {
     const newState = structuredClone(projectState)
+
+    const startDate = newState.sections[task.section].tasks[task.task].start
+
+    if (startDate && new Date(date) < new Date(startDate)) {
+      window.alert('End date cannot be before start date.')
+      return
+    }
+
     newState.sections[task.section].tasks[task.task].end = date
     setProjectState(newState)
   }
@@ -105,7 +122,8 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
 
   const handleColorClickChange = (e) => {
     const newState = structuredClone(projectState)
-    newState.sections[task.section].tasks[task.task].color = e.target.style.backgroundColor
+    const hexcolor = tinycolor(e.target.style.backgroundColor).toHexString()
+    newState.sections[task.section].tasks[task.task].color = hexcolor.toUpperCase()
     setProjectState(newState)
     setShowColors(false)
   }
