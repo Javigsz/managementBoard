@@ -1,6 +1,6 @@
 import './App.css'
 import Header from './components/Header/Header'
-import MainBoard from './components/Board/MainBoard'
+import MainBoardComponent from './components/Board/MainBoardComponent'
 import { project } from './mocks/project'
 import { useState } from 'react'
 import { FiltersProvider } from './context/filters'
@@ -13,7 +13,7 @@ function App () {
         <header>
           <Header projectState={projectState} setProjectState={setProjectState} />
         </header>
-        <MainBoard
+        <MainBoardComponent
           projectState={projectState}
           setProjectState={setProjectState}
         />

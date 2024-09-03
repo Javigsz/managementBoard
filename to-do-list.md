@@ -1,16 +1,18 @@
 ## TO DO LIST
 
-- [ ] Filter
+- [☑️] Filter
 
 - [☑️] Reset hole project
 
 - [☑️] Confirm reset
 
-- [ ] Search
-
 - [ ] Global context ( Zustand/Redux )
 
-- [ ] Refactor (custom hooks)
+- [ ] Refactor
+
+- [ ] Search
+
+- [ ] Custom Hooks
 
 - [ ] Deploy
 

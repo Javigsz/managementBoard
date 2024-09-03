@@ -32,7 +32,6 @@ const Menu = ({ openMenu, setOpenMenu, projectState, setProjectState }) => {
   }
 
   const handleConfirmReset = () => {
-    console.log('asdfasdf')
     setProjectState(project)
     setConfirmReset(false)
   }
