@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from 'react'
+import { debounce } from 'lodash'
 import Task from './Task/Task'
 import TaskActions from './Task/TaskActions'
 import './index.css'
@@ -10,6 +11,7 @@ import Droppable from './Droppable'
 import Draggable from './Task/Draggable'
 import SectionActions from './SectionActions'
 import { FiltersContext } from '../../context/filters'
+import { useStore } from '../../store/store'
 
 const MainBoard = ({ projectState, setProjectState }) => {
   const [showTask, setShowTask] = useState(false)
@@ -19,6 +21,9 @@ const MainBoard = ({ projectState, setProjectState }) => {
   const [isDragging, setIsDragging] = useState(false)
   const seeModalRef = useRef(true)
   const { filters } = useContext(FiltersContext)
+
+  const sections = useStore(state => state.project.sections)
+  const updateSections = useStore(state => state.updateSections)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -128,48 +133,52 @@ const MainBoard = ({ projectState, setProjectState }) => {
     setProjectState({ ...projectState, sections: [...projectState.sections, newSection] })
   }
 
-  const handleDragOver = (event) => {
+  const handleDragOver = debounce((event) => {
     const { active, over } = event
 
-    if (!over) return
+    if (!active || !over) return
 
+    // both ids can be either task or section
     const { id: activeId } = active
     const { id: overId } = over
 
     if (activeId === overId) return
 
-    const sourceIndex = projectState.sections.findIndex((section) =>
+    // if sourceIndex or destinationIndex is -1, it means that it's a section
+    // as sections can't be dragged, activeId will never be -1
+    const sourceIndex = sections.findIndex((section) =>
       section.tasks.some((task) => task.id === activeId)
     )
-    const destinationIndex = projectState.sections.findIndex((section) =>
+    const destinationIndex = sections.findIndex((section) =>
       section.tasks.some((task) => task.id === overId)
     )
 
     console.log(sourceIndex, destinationIndex)
 
     if (sourceIndex !== -1 && destinationIndex === -1) {
-      if (projectState.sections.findIndex((section) => section.id === overId) === sourceIndex) {
+      if (sections.findIndex((section) => section.id === overId) === sourceIndex) {
         return
       }
-      const sourceSection = projectState.sections[sourceIndex]
-      const destinationSection = projectState.sections.find(section => section.id === overId)
-      const destinationSectionIndex = projectState.sections.findIndex(section => section.id === overId)
+      const sourceSection = sections[sourceIndex]
+      const destinationSection = sections.find(section => section.id === overId)
+      const destinationSectionIndex = sections.findIndex(section => section.id === overId)
 
       const activeTaskIndex = sourceSection.tasks.findIndex((task) => task.id === activeId)
 
       if (activeTaskIndex !== -1) {
-        const newSourceTasks = [...sourceSection.tasks]
+        const newSourceTasks = structuredClone(sourceSection.tasks)
         const [movedTask] = newSourceTasks.splice(activeTaskIndex, 1)
 
-        const newDestinationTasks = [...destinationSection.tasks]
+        const newDestinationTasks = structuredClone(destinationSection.tasks)
         newDestinationTasks.splice(0, 0, movedTask)
 
-        const newSections = [...projectState.sections]
+        const newSections = structuredClone(sections)
         newSections[sourceIndex] = { ...sourceSection, tasks: newSourceTasks }
 
         newSections[destinationSectionIndex] = { ...destinationSection, tasks: newDestinationTasks }
 
-        setProjectState({ ...projectState, sections: newSections })
+        // setProjectState({ ...projectState, sections: newSections })
+        updateSections(newSections)
         console.log('caso 1')
       }
 
@@ -177,32 +186,32 @@ const MainBoard = ({ projectState, setProjectState }) => {
     }
 
     if (sourceIndex !== -1 && destinationIndex !== -1) {
-      const sourceSection = projectState.sections[sourceIndex]
-      const destinationSection = projectState.sections[destinationIndex]
+      const sourceSection = sections[sourceIndex]
+      const destinationSection = sections[destinationIndex]
 
       const activeTaskIndex = sourceSection.tasks.findIndex((task) => task.id === activeId)
       const overTaskIndex = destinationSection.tasks.findIndex((task) => task.id === overId)
 
       if (activeTaskIndex !== -1 && overTaskIndex !== -1) {
-        const newSourceTasks = [...sourceSection.tasks]
+        const newSourceTasks = structuredClone(sourceSection.tasks)
         const [movedTask] = newSourceTasks.splice(activeTaskIndex, 1)
 
-        const newDestinationTasks = [...destinationSection.tasks]
+        const newDestinationTasks = structuredClone(destinationSection.tasks)
         if (sourceIndex === destinationIndex) {
           newDestinationTasks.splice(activeTaskIndex, 1)
         }
         newDestinationTasks.splice(overTaskIndex, 0, movedTask)
 
-        const newSections = [...projectState.sections]
+        const newSections = structuredClone(sections)
         newSections[sourceIndex] = { ...sourceSection, tasks: newSourceTasks }
 
         newSections[destinationIndex] = { ...destinationSection, tasks: newDestinationTasks }
 
-        setProjectState({ ...projectState, sections: newSections })
+        updateSections(newSections)
         console.log('caso 2')
       }
     }
-  }
+  }, [10])
 
   const filteredUser = (task) => {
     return projectState.users.some(user =>
@@ -238,7 +247,7 @@ const MainBoard = ({ projectState, setProjectState }) => {
           }}
         >
           <ol className='mainBoard'>
-            {projectState.sections.map((section, index) => (
+            {sections.map((section, index) => (
               <li className='section' key={section.id}>
                 <div className='section-header'>
                   <textarea

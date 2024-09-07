@@ -2,11 +2,13 @@ import React, { useContext } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { FiltersContext } from '../../context/filters'
+import { useStore } from '../../store/store'
+import { colorArray } from '../../utils/colors'
 
-const colorArray = ['#1B59CA', '#7C5E07', '#A04700', '#4F6A24', '#8F3E71', '#A82D20', '#323131', '#5E50B0']
-
-const Filter = ({ closeModal, projectState }) => {
+const Filter = ({ closeModal }) => {
   const { filters, setFilters } = useContext(FiltersContext)
+  const users = useStore(state => state.project.users)
+
   const handleClickUser = (event, userId) => {
     if (event.target.checked) {
       setFilters({ ...filters, users: [...filters.users, userId] })
@@ -35,7 +37,7 @@ const Filter = ({ closeModal, projectState }) => {
         <h5>Users</h5>
         <ul>
           <li>
-            {projectState.users.map(user => (
+            {users.map(user => (
               <label key={user.id} htmlFor={user.id}>
                 <input
                   type='checkbox'

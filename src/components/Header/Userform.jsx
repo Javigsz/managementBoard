@@ -1,26 +1,28 @@
 import React, { useState } from 'react'
+import { useStore } from '../../store/store'
 
-const Userform = ({ projectState, setProjectState }) => {
+const Userform = () => {
   const [avatar, setAvatar] = useState('')
   const [username, setUsername] = useState('')
   const [fullName, setFullName] = useState('')
 
+  const users = useStore(state => state.project.users)
+  const newUser = useStore(state => state.newUser)
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (projectState.users.find(user => user.username === username)) {
-      console.log('Username already exists')
+    if (users.find(user => user.username === username)) {
+      window.alert('Username already exists')
     } else {
-      if (avatar === '') setAvatar(undefined)
-      const newUser = {
+      const user = {
         id: crypto.randomUUID(),
         avatar,
         username,
         name: fullName,
         tasks: []
       }
-
-      const newUsers = [...projectState.users, newUser]
-      setProjectState({ ...projectState, users: newUsers })
+      console.log(user.avatar)
+      newUser(user)
     }
     setAvatar('')
     setUsername('')

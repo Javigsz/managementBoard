@@ -11,7 +11,7 @@ function App () {
     <>
       <FiltersProvider>
         <header>
-          <Header projectState={projectState} setProjectState={setProjectState} />
+          <Header />
         </header>
         <MainBoardComponent
           projectState={projectState}

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import tinycolor from 'tinycolor2'
+import { useStore } from '../../../store/store'
 
-const TaskActions = ({ task, closeModal, sectionPosition, projectState, setProjectState }) => {
+const TaskActions = ({ task, closeModal, sectionPosition }) => {
   const [showColors, setShowColors] = useState(false)
   const modalStyle = {
     position: 'absolute',
@@ -16,61 +17,29 @@ const TaskActions = ({ task, closeModal, sectionPosition, projectState, setProje
     color: 'white'
   }
 
-  const handleEditClick = () => {
-    const newState = structuredClone(projectState)
-    newState.sections.forEach(section => {
-      section.tasks.forEach(taskToEdit => {
-        if (taskToEdit.id === task.id) {
-          taskToEdit.editing = true
-        }
-      })
-    })
+  const moveTask = useStore(state => state.moveTask)
+  const deleteTask = useStore(state => state.deleteTask)
+  const setEditTask = useStore(state => state.setEditTask)
+  const changeSizeTask = useStore(state => state.changeSizeTask)
+  const changeColorTask = useStore(state => state.changeColorTask)
 
-    setProjectState(newState)
+  const handleEditClick = () => {
+    setEditTask(task, true)
     closeModal()
   }
 
   const handleEditDelete = () => {
-    const newState = structuredClone(projectState)
-    newState.sections.forEach(section => {
-      section.tasks = section.tasks.filter(taskToDelete => taskToDelete.id !== task.id)
-    })
-    setProjectState(newState)
+    deleteTask(task)
     closeModal()
   }
 
   const handleMoveTask = () => {
-    const newState = structuredClone(projectState)
-    const sectionIndex = newState.sections.findIndex((section, i) =>
-      section.tasks.findIndex((taskToMove, j) => taskToMove.id === task.id) !== -1
-        ? [i, section.tasks.findIndex((taskToMove) => taskToMove.id === task.id)]
-        : null
-    )
-
-    if (sectionIndex > -1 && newState.sections[sectionIndex + 1]) {
-      newState.sections[sectionIndex].tasks = newState.sections[sectionIndex].tasks.filter(taskToMove => taskToMove.id !== task.id)
-      newState.sections[sectionIndex + 1].tasks.push(task)
-
-      setProjectState(newState)
-    }
-
+    moveTask(task)
     closeModal()
   }
 
   const handleSizeClick = () => {
-    const newState = structuredClone(projectState)
-    newState.sections.forEach(section => {
-      section.tasks.forEach(taskToEdit => {
-        if (taskToEdit.id === task.id) {
-          if (taskToEdit.size === 'small') {
-            taskToEdit.size = 'large'
-          } else {
-            taskToEdit.size = 'small'
-          }
-        }
-      })
-    })
-    setProjectState(newState)
+    changeSizeTask(task)
     closeModal()
   }
 
@@ -79,15 +48,7 @@ const TaskActions = ({ task, closeModal, sectionPosition, projectState, setProje
   }
 
   const handleColorClickChange = (e) => {
-    const newState = structuredClone(projectState)
-    newState.sections.forEach(section => {
-      section.tasks.forEach(taskToEdit => {
-        if (taskToEdit.id === task.id) {
-          taskToEdit.color = tinycolor(e.target.style.backgroundColor).toHexString().toUpperCase()
-        }
-      })
-    })
-    setProjectState(newState)
+    changeColorTask(task, tinycolor(e.target.style.backgroundColor).toHexString().toUpperCase())
     setShowColors(false)
     closeModal()
   }

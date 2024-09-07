@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import Userform from './Userform'
-import { project } from '../../mocks/project'
+import { useStore } from '../../store/store'
 
-const Menu = ({ openMenu, setOpenMenu, projectState, setProjectState }) => {
+const Menu = ({ openMenu, setOpenMenu }) => {
   const [showUsers, setShowUsers] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [showDeleteUser, setShowDeleteUser] = useState(false)
   const [showChangeImage, setShowChangeImage] = useState(false)
   const [confirmReset, setConfirmReset] = useState(false)
+
+  const users = useStore(state => state.project.users)
+  const deleteUser = useStore(state => state.deleteUser)
+  const resetProject = useStore(state => state.resetProject)
 
   const handleClickUser = (id) => {
     if (id === showDeleteUser) {
@@ -24,15 +28,13 @@ const Menu = ({ openMenu, setOpenMenu, projectState, setProjectState }) => {
 
   const handleDeleteClick = () => {
     if (showDeleteUser) {
-      const newState = structuredClone(projectState)
-      newState.users = newState.users.filter(user => user.id !== showDeleteUser)
-      setProjectState(newState)
+      deleteUser(showDeleteUser)
       setShowDeleteUser(false)
     }
   }
 
   const handleConfirmReset = () => {
-    setProjectState(project)
+    resetProject()
     setConfirmReset(false)
   }
 
@@ -48,12 +50,12 @@ const Menu = ({ openMenu, setOpenMenu, projectState, setProjectState }) => {
               <input
                 className='image-input'
                 type='text'
-                onChange={(e) => setProjectState({ ...projectState, backgroundImage: e.target.value })}
+                // onChange={(e) => setProjectState({ ...projectState, backgroundImage: e.target.value })}
               />}
             <li className='li-menu'><button onClick={() => handleClickUsersList()} className={`menu-button ${showUsers ? 'open' : ''}`}>See Users List</button></li>
             {showUsers && (
               <ul className='user-list'>
-                {projectState.users.map(user => (
+                {users.map(user => (
                   <li key={user.id} className={`user-item-container ${user.id === showDeleteUser ? 'marked' : ''}`} onClick={() => handleClickUser(user.id)}>
                     {user.avatar && <img src={user.avatar} />}
                     {user.avatar === undefined && <img src='/default-user.jpg' />}
@@ -65,7 +67,7 @@ const Menu = ({ openMenu, setOpenMenu, projectState, setProjectState }) => {
             )}
             {showDeleteUser && <button className='mini-menu-button' onClick={() => handleDeleteClick()}>Delete user</button>}
             <li className='li-menu'><button onClick={() => setShowForm(!showForm)} className={`menu-button ${showForm ? 'open' : ''}`}>New user</button></li>
-            {showForm && <Userform projectState={projectState} setProjectState={setProjectState} />}
+            {showForm && <Userform />}
             <li className='li-menu'><button className={`menu-button ${confirmReset ? 'open' : ''}`} onClick={() => setConfirmReset(!confirmReset)}>Restart project</button></li>
             {confirmReset &&
               <div className='confirm-reset'>

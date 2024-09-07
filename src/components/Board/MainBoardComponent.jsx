@@ -1,20 +1,27 @@
-import React, { useState, useEffect, useRef, useContext } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { DndContext, useSensor, useSensors, PointerSensor } from '@dnd-kit/core'
+import { debounce } from 'lodash'
 import Section from './Section'
 import './index.css'
 import SectionActions from './SectionActions'
 import TaskActions from './Task/TaskActions'
 import Task from './Task/Task'
-import { FiltersContext } from '../../context/filters'
+import { useStore } from '../../store/store'
 
-const MainBoard = ({ projectState, setProjectState }) => {
+const MainBoard = () => {
   const [showTask, setShowTask] = useState(false)
   const [showTaskActions, setShowTaskActions] = useState(false)
   const [showSectionActions, setShowSectionActions] = useState(false)
   const [sectionPosition, setSectionPosition] = useState({ top: 0, left: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const seeModalRef = useRef(true)
-  const { filters } = useContext(FiltersContext)
+
+  const sections = useStore(state => state.project.sections)
+  const newSection = useStore(state => state.newSection)
+  const newTask = useStore(state => state.newTask)
+  const deleteTask = useStore(state => state.deleteTask)
+  const backgroundImage = useStore(state => state.project.backgroundImage)
+  const interchangeTasks = useStore(state => state.interchangeTasks)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -24,10 +31,9 @@ const MainBoard = ({ projectState, setProjectState }) => {
     })
   )
 
-  // Lógica del DnD y otras funciones
   const handleMouseUp = (taskIndex, sectionIndex) => {
     if (seeModalRef.current) {
-      setShowTask({ task: taskIndex, section: sectionIndex })
+      setShowTask({ taskInd: taskIndex, sectionInd: sectionIndex })
     }
     seeModalRef.current = true
   }
@@ -37,37 +43,6 @@ const MainBoard = ({ projectState, setProjectState }) => {
       seeModalRef.current = false
     }
   }, [isDragging])
-
-  const handleInputChange = (event, index) => {
-    const newState = structuredClone(projectState)
-    newState.sections[index].name = event.target.value
-    setProjectState(newState)
-  }
-
-  const handleInputChangeTask = (event, sectionIndex, taskIndex) => {
-    const newState = structuredClone(projectState)
-    newState.sections[sectionIndex].tasks[taskIndex].name = event.target.value
-    setProjectState(newState)
-  }
-
-  const handleOnBlur = (event, index) => {
-    if (event.target.value === '') {
-      const newName = 'To-do list'
-      const newState = structuredClone(projectState)
-      newState.sections[index].name = newName
-      setProjectState(newState)
-    }
-  }
-
-  const handleOnBlurTask = (event, sectionIndex, taskIndex) => {
-    const newState = structuredClone(projectState)
-    newState.sections[sectionIndex].tasks[taskIndex].editing = false
-    if (event.target.value === '') {
-      const newName = 'Task'
-      newState.sections[sectionIndex].tasks[taskIndex].name = newName
-    }
-    setProjectState(newState)
-  }
 
   const handleEditClick = (e, task) => {
     e.stopPropagation()
@@ -92,7 +67,7 @@ const MainBoard = ({ projectState, setProjectState }) => {
   }
 
   const handleClickAddTask = (section) => {
-    const newTask = {
+    const task = {
       id: crypto.randomUUID(),
       name: 'New task',
       desc: 'Add description here',
@@ -103,118 +78,64 @@ const MainBoard = ({ projectState, setProjectState }) => {
       end: null
     }
 
-    const newState = structuredClone(projectState)
-    const taskSectionIndex = newState.sections.findIndex(sectionTask => sectionTask.id === section.id)
-    newState.sections[taskSectionIndex].tasks.push(newTask)
-
-    setProjectState(newState)
+    const taskSectionIndex = sections.findIndex(sectionTask => sectionTask.id === section.id)
+    newTask(taskSectionIndex, task)
   }
 
   const handleClickAddSection = () => {
-    const newSection = {
+    const section = {
       id: crypto.randomUUID(),
       name: 'To-do list',
       tasks: []
     }
 
-    setProjectState({ ...projectState, sections: [...projectState.sections, newSection] })
+    newSection(section)
   }
 
-  const handleDragOver = (event) => {
+  const handleDragOver = debounce((event) => {
     const { active, over } = event
 
-    if (!over) return
+    if (!active || !over || active === over) return
 
+    // over ids can be either task or section ids
     const { id: activeId } = active
     const { id: overId } = over
 
-    if (activeId === overId) return
-
-    const sourceIndex = projectState.sections.findIndex((section) =>
+    // if sourceIndex or destinationIndex is -1, it means that it's a section
+    // as sections can't be dragged, activeId will never be -1
+    const sourceIndex = sections.findIndex((section) =>
       section.tasks.some((task) => task.id === activeId)
     )
-    const destinationIndex = projectState.sections.findIndex((section) =>
+    const destinationIndex = sections.findIndex((section) =>
       section.tasks.some((task) => task.id === overId)
     )
 
-    if (sourceIndex !== -1 && destinationIndex === -1) {
-      if (projectState.sections.findIndex((section) => section.id === overId) === sourceIndex) {
-        return
+    const taskToMove = sections[sourceIndex].tasks.find((task) => task.id === activeId)
+    const sectionForTaskIndex = sections.findIndex((section) => section.id === overId)
+
+    // If the destination section is empty
+    if (destinationIndex === -1 && sections[sectionForTaskIndex].tasks.length <= 0) {
+      deleteTask(taskToMove)
+      newTask(sectionForTaskIndex, taskToMove)
+    // If its not empy
+    } else if (destinationIndex !== -1) {
+      // If destination section is not the same as source section
+      if (sourceIndex !== destinationIndex) {
+        deleteTask(taskToMove)
+        newTask(destinationIndex, taskToMove)
       }
-      const sourceSection = projectState.sections[sourceIndex]
-      const destinationSection = projectState.sections.find(section => section.id === overId)
-      const destinationSectionIndex = projectState.sections.findIndex(section => section.id === overId)
-
-      const activeTaskIndex = sourceSection.tasks.findIndex((task) => task.id === activeId)
-
-      if (activeTaskIndex !== -1) {
-        const newSourceTasks = [...sourceSection.tasks]
-        const [movedTask] = newSourceTasks.splice(activeTaskIndex, 1)
-
-        const newDestinationTasks = [...destinationSection.tasks]
-        newDestinationTasks.splice(0, 0, movedTask)
-
-        const newSections = [...projectState.sections]
-        newSections[sourceIndex] = { ...sourceSection, tasks: newSourceTasks }
-
-        newSections[destinationSectionIndex] = { ...destinationSection, tasks: newDestinationTasks }
-
-        setProjectState({ ...projectState, sections: newSections })
-      }
-
-      return
+      // If destination section is the same from source section
+      const taskToChange = sections[destinationIndex].tasks.find((task) => task.id === overId)
+      interchangeTasks(taskToMove, taskToChange)
     }
-
-    if (sourceIndex !== -1 && destinationIndex !== -1) {
-      const sourceSection = projectState.sections[sourceIndex]
-      const destinationSection = projectState.sections[destinationIndex]
-
-      const activeTaskIndex = sourceSection.tasks.findIndex((task) => task.id === activeId)
-      const overTaskIndex = destinationSection.tasks.findIndex((task) => task.id === overId)
-
-      if (activeTaskIndex !== -1 && overTaskIndex !== -1) {
-        const newSourceTasks = [...sourceSection.tasks]
-        const [movedTask] = newSourceTasks.splice(activeTaskIndex, 1)
-
-        const newDestinationTasks = [...destinationSection.tasks]
-        if (sourceIndex === destinationIndex) {
-          newDestinationTasks.splice(activeTaskIndex, 1)
-        }
-        newDestinationTasks.splice(overTaskIndex, 0, movedTask)
-
-        const newSections = [...projectState.sections]
-        newSections[sourceIndex] = { ...sourceSection, tasks: newSourceTasks }
-
-        newSections[destinationIndex] = { ...destinationSection, tasks: newDestinationTasks }
-
-        setProjectState({ ...projectState, sections: newSections })
-      }
-    }
-  }
-
-  const filteredUser = (task) => {
-    return projectState.users.some(user =>
-      user.tasks.includes(task.id) && filters.users.includes(user.id)
-    )
-  }
-
-  const filteredColor = (task) => {
-    return filters.color.includes(task.color)
-  }
-
-  const filteredDate = (task) => {
-    if (task.end !== null) {
-      return task.end <= filters.endDate
-    }
-    return false
-  }
+  }, [10])
 
   return (
     <>
       <DndContext
         sensors={sensors}
         onDragStart={() => setIsDragging(true)}
-        onDragOver={e => handleDragOver(e)}
+        onDragOver={(e) => handleDragOver(e)}
         onDragEnd={() => setIsDragging(false)}
         onDragCancel={() => setIsDragging(false)}
       >
@@ -222,33 +143,25 @@ const MainBoard = ({ projectState, setProjectState }) => {
           className='background'
           style={{
             '&::before': {
-              backgroundImage: `url(${projectState.backgroundImage})`
+              backgroundImage: `url(${backgroundImage})`
             }
           }}
         >
           <ol className='mainBoard'>
-            {projectState.sections.map((section, index) => (
+            {sections.map((section, index) => (
               <Section
                 key={section.id}
                 section={section}
                 index={index}
                 isDragging={isDragging}
-                handleInputChange={handleInputChange}
-                handleOnBlur={handleOnBlur}
                 handleClickSection={handleClickSection}
                 handleClickAddTask={handleClickAddTask}
-                projectState={projectState}
                 handleMouseUp={handleMouseUp}
                 handleEditClick={handleEditClick}
-                handleInputChangeTask={handleInputChangeTask}
-                handleOnBlurTask={handleOnBlurTask}
                 handleKeyDownTask={handleKeyDownTask}
-                filteredColor={filteredColor}
-                filteredUser={filteredUser}
-                filteredDate={filteredDate}
               />
             ))}
-            <div className='flat-button' onClick={() => handleClickAddSection()} key={projectState.sections.length}>Add Section</div>
+            <div className='flat-button' onClick={() => handleClickAddSection()} key={sections.length}>Add Section</div>
           </ol>
         </div>
         {showSectionActions &&
@@ -256,15 +169,12 @@ const MainBoard = ({ projectState, setProjectState }) => {
             section={showSectionActions}
             closeModal={() => setShowSectionActions(false)}
             sectionPosition={sectionPosition}
-            projectState={projectState}
-            setProjectState={setProjectState}
             handleClickAddTask={handleClickAddTask}
           />}
         {showTask &&
           <Task
-            task={showTask}
-            projectState={projectState}
-            setProjectState={setProjectState}
+            taskInd={showTask.taskInd}
+            sectionInd={showTask.sectionInd}
             handleKeyDownTask={handleKeyDownTask}
             closeModal={() => setShowTask(false)}
           />}
@@ -273,8 +183,6 @@ const MainBoard = ({ projectState, setProjectState }) => {
             task={showTaskActions}
             closeModal={() => setShowTaskActions(false)}
             sectionPosition={sectionPosition}
-            projectState={projectState}
-            setProjectState={setProjectState}
           />}
       </DndContext>
     </>

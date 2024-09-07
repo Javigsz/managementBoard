@@ -1,4 +1,5 @@
 import React from 'react'
+import { useStore } from '../../store/store'
 
 const SectionActions = ({ section, closeModal, sectionPosition, projectState, setProjectState, handleClickAddTask }) => {
   const modalStyle = {
@@ -13,9 +14,14 @@ const SectionActions = ({ section, closeModal, sectionPosition, projectState, se
     zIndex: 1
   }
 
+  const deleteSection = useStore(state => state.deleteSection)
+  const copySection = useStore(state => state.copySection)
+  const moveSection = useStore(state => state.moveSection)
+  const moveTask = useStore(state => state.moveTask)
+  const deleteTask = useStore(state => state.deleteTask)
+
   const handleClickDelete = () => {
-    const newSections = projectState.sections.filter(sectionToDelete => sectionToDelete.id !== section.id)
-    setProjectState({ ...projectState, sections: newSections })
+    deleteSection(section.id)
     closeModal()
   }
 
@@ -25,44 +31,22 @@ const SectionActions = ({ section, closeModal, sectionPosition, projectState, se
   }
 
   const handleClickCopy = () => {
-    const newState = structuredClone(projectState)
-    const index = newState.sections.findIndex(sectionToCopy => sectionToCopy.id === section.id)
-    const newTasks = section.tasks.map(task => ({ ...task, id: crypto.randomUUID() }))
-    const newSection = { ...section, name: `Copy of ${section.name}`, id: crypto.randomUUID(), tasks: newTasks }
-    newState.sections.splice(index + 1, 0, { ...newSection })
-    setProjectState(newState)
+    copySection(section)
     closeModal()
   }
 
   const handleClickMove = () => {
-    const index = projectState.sections.findIndex(sectionToMove => sectionToMove.id === section.id)
-    if (projectState.sections[index + 1]) {
-      const newState = structuredClone(projectState)
-      newState.sections.splice(index + 1, 0, newState.sections.splice(index, 1)[0])
-      setProjectState(newState)
-    }
-
+    moveSection(section.id)
     closeModal()
   }
 
   const handleClickMoveAll = () => {
-    const index = projectState.sections.findIndex(sectionToMove => sectionToMove.id === section.id)
-    if (projectState.sections[index + 1]) {
-      const newState = structuredClone(projectState)
-      const tasksToMove = newState.sections[index].tasks
-      newState.sections[index].tasks = []
-      newState.sections[index + 1].tasks = newState.sections[index + 1].tasks.concat(tasksToMove)
-      setProjectState(newState)
-    }
-
+    section.tasks.map(task => moveTask(task))
     closeModal()
   }
 
   const handleClickDeleteAll = () => {
-    const newState = structuredClone(projectState)
-    const index = newState.sections.findIndex(sectionToDelete => sectionToDelete.id === section.id)
-    newState.sections[index].tasks = []
-    setProjectState(newState)
+    section.tasks.map(task => deleteTask(task))
     closeModal()
   }
 

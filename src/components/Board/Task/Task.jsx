@@ -6,8 +6,9 @@ import { MdOutlineDateRange } from 'react-icons/md'
 import 'react-datepicker/dist/react-datepicker.css'
 import { IoIosColorPalette } from 'react-icons/io'
 import tinycolor from 'tinycolor2'
+import { useStore } from '../../../store/store'
 
-const Task = ({ task, closeModal, projectState, setProjectState }) => {
+const Task = ({ taskInd, sectionInd, closeModal }) => {
   const modalStyle = {
     position: 'absolute',
     display: 'flex',
@@ -22,109 +23,80 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
   }
   const [selectedValue, setSelectedValue] = useState('')
   const [showColors, setShowColors] = useState(false)
-  const handleEditTaskName = (e) => {
-    const newState = structuredClone(projectState)
-    newState.sections[task.section].tasks[task.task].name = e.target.value
-    setProjectState(newState)
-  }
+
+  const {
+    project: {
+      users,
+      sections
+    },
+    setTaskName,
+    changeColorTask,
+    setTaskDesc,
+    setEditTask,
+    moveTask,
+    deleteTask,
+    setStartDateTask,
+    setEndDateTask,
+    newTask,
+    addUserToTask,
+    removeUserFromTask
+  } = useStore(state => state)
+
+  const task = sections[sectionInd].tasks[taskInd]
 
   const handleOnBlurTaskd = (e) => {
-    const newState = structuredClone(projectState)
     if (e.target.value === '') {
       const newName = 'Task'
-      newState.sections[task.section].tasks[task.task].name = newName
+      setTaskName(task, newName)
     }
-    setProjectState(newState)
   }
 
-  //   const handleKeyDownTask = (e) => {
-  //     e.target.style.height = '20px'
-  //     e.target.style.height = `${e.target.scrollHeight}px`
-  //   }
-
   const handleEditTaskDesc = (e) => {
-    const newState = structuredClone(projectState)
-    newState.sections[task.section].tasks[task.task].desc = e.target.value
-    setProjectState(newState)
+    setTaskDesc(task, e.target.value)
   }
 
   const handleOnBlurTaskdDesc = (e) => {
-    const newState = structuredClone(projectState)
     if (e.target.value === '') {
       const newName = 'Task description'
-      newState.sections[task.section].tasks[task.task].desc = newName
+      setTaskDesc(task, newName)
     }
-    setProjectState(newState)
   }
 
   const setStartDate = (date) => {
-    const newState = structuredClone(projectState)
-
-    const endDate = newState.sections[task.section].tasks[task.task].end
-
-    if (endDate && new Date(date) > new Date(endDate)) {
-      window.alert('Start date cannot be after end date.')
-      return
-    }
-
-    newState.sections[task.section].tasks[task.task].start = date
-    setProjectState(newState)
+    setStartDateTask(task, date)
   }
 
   const setEndDate = (date) => {
-    const newState = structuredClone(projectState)
-
-    const startDate = newState.sections[task.section].tasks[task.task].start
-
-    if (startDate && new Date(date) < new Date(startDate)) {
-      window.alert('End date cannot be before start date.')
-      return
-    }
-
-    newState.sections[task.section].tasks[task.task].end = date
-    setProjectState(newState)
+    setEndDateTask(task, date)
   }
 
   const handleEditTask = () => {
-    const newState = structuredClone(projectState)
-    newState.sections[task.section].tasks[task.task].editing = !newState.sections[task.section].tasks[task.task].editing
-    setProjectState(newState)
+    setEditTask(task, true)
     closeModal()
   }
 
   const handleDuplicateTask = () => {
-    const newState = structuredClone(projectState)
-    const newTask = {
-      ...projectState.sections[task.section].tasks[task.task],
+    const duplicatedTask = {
+      ...task,
       id: crypto.randomUUID()
     }
-    newState.sections[task.section].tasks.push(newTask)
-    setProjectState(newState)
+    newTask(sectionInd, duplicatedTask)
     closeModal()
   }
 
   const handleDeleteTask = () => {
-    const newState = structuredClone(projectState)
-    newState.sections[task.section].tasks.splice(task.task, 1)
-    setProjectState(newState)
+    deleteTask(task)
     closeModal()
   }
 
   const handleMoveTask = () => {
-    const newState = structuredClone(projectState)
-    if (newState.sections[task.section + 1]) {
-      newState.sections[task.section].tasks = newState.sections[task.section].tasks.filter(taskToMove => taskToMove.id !== projectState.sections[task.section].tasks[task.task].id)
-      newState.sections[task.section + 1].tasks.push(projectState.sections[task.section].tasks[task.task])
-      setProjectState(newState)
-    }
+    moveTask(task)
     closeModal()
   }
 
   const handleColorClickChange = (e) => {
-    const newState = structuredClone(projectState)
     const hexcolor = tinycolor(e.target.style.backgroundColor).toHexString()
-    newState.sections[task.section].tasks[task.task].color = hexcolor.toUpperCase()
-    setProjectState(newState)
+    changeColorTask(task, hexcolor)
     setShowColors(false)
   }
 
@@ -132,22 +104,18 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
     e.preventDefault()
     if (selectedValue === '' || selectedValue === 0) return
     const index = parseInt(selectedValue) - 1
-    const newState = structuredClone(projectState)
-    newState.users[index].tasks = [...newState.users[index].tasks, projectState.sections[task.section].tasks[task.task].id]
-    setProjectState(newState)
+    addUserToTask(task.id, index)
     setSelectedValue(0)
   }
 
   const handleDeleteUser = (index) => {
-    const newState = structuredClone(projectState)
-    newState.users[index].tasks = newState.users[index].tasks.filter(taskd => taskd !== projectState.sections[task.section].tasks[task.task].id)
-    setProjectState(newState)
+    removeUserFromTask(task.id, index)
   }
 
   return (
     <>
       <div className='modal_backdrop' onClick={() => closeModal()}>
-        <div className='task_modal' style={{ backgroundColor: projectState.sections[task.section].tasks[task.task].color }} onClick={e => e.stopPropagation()}>
+        <div className='task_modal' style={{ backgroundColor: task.color }} onClick={e => e.stopPropagation()}>
           <div className='color'>
             <button onClick={() => setShowColors(!showColors)} className='change-color-button'><IoIosColorPalette size={20} /></button>
             {showColors && (
@@ -167,20 +135,20 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
           </div>
           <textarea
             className='task-name-input'
-            value={projectState.sections[task.section].tasks[task.task].name}
+            value={task.name}
             // onFocus={(e) => handleKeyDownTask(e)}
             // onInput={(e) => handleKeyDownTask(e)}
             style={{ fieldsyzing: 'content' }}
-            onChange={e => handleEditTaskName(e)}
+            onChange={(event) => setTaskName(task, event.target.value)}
             onBlur={e => handleOnBlurTaskd(e)}
             spellCheck='false'
           />
           <div className='task-name-section'>
-            <p>From {projectState.sections[task.section].name}</p>
+            <p>From {sections[sectionInd].name}</p>
           </div>
           <textarea
             className='task-desc-input'
-            value={projectState.sections[task.section].tasks[task.task].desc}
+            value={task.desc}
             // onFocus={(e) => handleKeyDownTask(e)}
             // onInput={(e) => handleKeyDownTask(e)}
             onChange={e => handleEditTaskDesc(e)}
@@ -190,8 +158,8 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
           <div className='task-users-section'>
             <h4><FaUser />  Users</h4>
             <div className='users-list'>
-              {projectState.users.map((user, index) => (
-                user.tasks.includes(projectState.sections[task.section].tasks[task.task].id) && (
+              {users.map((user, index) => (
+                user.tasks.includes(task.id) && (
                   <div className='avatar-container' key={user.id}>
                     <img className='avatar' src={user.avatar ? user.avatar : '/default-user.jpg'} alt={user.username} />
                     <div className='delete-icon' onClick={() => handleDeleteUser(index)}>✖</div>
@@ -204,7 +172,7 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
                 <button type='submit' className='task-button'>Add User</button>
                 <select name='users' id='user-select' value={selectedValue} onChange={(e) => setSelectedValue(e.target.value)}>
                   <option value=''>Select User</option>
-                  {projectState.users.map(user => (
+                  {users.map(user => (
                     <option key={user.id} value={user.id}>{user.username}</option>
                   ))}
                 </select>
@@ -214,9 +182,9 @@ const Task = ({ task, closeModal, projectState, setProjectState }) => {
           <div className='task-dates-section'>
             <h4><MdOutlineDateRange />  Dates</h4>
             <h5>Start: </h5>
-            <DatePicker className='datepicker' selected={projectState.sections[task.section].tasks[task.task].start} onChange={(date) => setStartDate(date)} />
+            <DatePicker className='datepicker' selected={task.start} onChange={(date) => setStartDate(date)} />
             <h5>End: </h5>
-            <DatePicker className='datepicker' selected={projectState.sections[task.section].tasks[task.task].end} onChange={(date) => setEndDate(date)} />
+            <DatePicker className='datepicker' selected={task.end} onChange={(date) => setEndDate(date)} />
           </div>
           <div className='task_actions'>
             <button className='task-button' onClick={e => handleEditTask()}>Edit</button>

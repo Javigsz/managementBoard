@@ -1,22 +1,28 @@
 import React from 'react'
 import { BsThreeDots } from 'react-icons/bs'
-import Droppable from './Droppable'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import TaskItem from './TaskItem'
+import Droppable from './Droppable'
+import { useStore } from '../../store/store'
 
 const Section = ({
-  section, index, isDragging, handleInputChange,
-  handleOnBlur, handleClickSection, handleClickAddTask, projectState,
-  handleMouseUp, handleEditClick, handleInputChangeTask,
-  handleOnBlurTask, handleKeyDownTask, filteredColor, filteredUser, filteredDate, showTask
+  section, index, isDragging, handleClickSection, handleClickAddTask,
+  handleMouseUp, handleEditClick, handleKeyDownTask
 }) => {
+  const setSectionName = useStore(state => state.setSectionName)
+  const handleOnBlur = (event, index) => {
+    if (event.target.value === '') {
+      const newName = 'To-do list'
+      setSectionName(newName, index)
+    }
+  }
   return (
     <li className='section' key={section.id}>
       <div className='section-header'>
         <textarea
           className='section-title'
           value={section.name}
-          onChange={event => handleInputChange(event, index)}
+          onChange={event => setSectionName(event.target.value, index)}
           onBlur={event => handleOnBlur(event, index)}
           spellCheck='false'
         />
@@ -33,12 +39,7 @@ const Section = ({
                 sectionIndex={index}
                 handleMouseUp={handleMouseUp}
                 handleEditClick={handleEditClick}
-                handleInputChangeTask={handleInputChangeTask}
-                handleOnBlurTask={handleOnBlurTask}
                 handleKeyDownTask={handleKeyDownTask}
-                filteredColor={filteredColor}
-                filteredUser={filteredUser}
-                filteredDate={filteredDate}
               />
             ))}
           </SortableContext>

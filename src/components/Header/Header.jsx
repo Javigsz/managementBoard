@@ -4,35 +4,43 @@ import { IoFilter } from 'react-icons/io5'
 import Menu from './Menu'
 import Filter from './Filter'
 import './index.css'
+import { useStore } from '../../store/store'
 
-const Header = ({ projectState, setProjectState }) => {
+const Header = () => {
   const [openMenu, setOpenMenu] = useState(false)
   const [openFiltrer, setOpenFiltrer] = useState(false)
 
+  const projectName = useStore(state => state.project.name)
+  const setProjectName = useStore((state) => state.setProjectName)
+
   const handleInputChange = event => {
-    setProjectState({ ...projectState, name: event.target.value })
+    setProjectName(event.target.value)
     event.target.style.width = event.target.value.length + 'ch'
   }
 
   const handleOnBlur = event => {
     if (event.target.value === '') {
       const newName = 'New Project'
-      setProjectState({ ...projectState, name: newName })
+      setProjectName(newName)
       event.target.style.width = newName.length + 'ch'
     }
   }
 
   useEffect(() => {
-    document.title = projectState.name ?? 'New Project'
-  }, [projectState.name])
+    if (projectName === '') {
+      document.title = 'New Project'
+    } else {
+      document.title = projectName
+    }
+  }, [projectName])
 
   return (
     <>
       <div className='header'>
         <input
           className='header-input'
-          style={{ width: projectState.name.length + 'ch' }}
-          value={projectState.name}
+          style={{ width: projectName.length + 'ch' }}
+          value={projectName}
           onChange={event => handleInputChange(event)}
           onBlur={event => handleOnBlur(event)}
         />
@@ -49,12 +57,10 @@ const Header = ({ projectState, setProjectState }) => {
               closeModal={() => setOpenFiltrer(false)}
               openFilter={openFiltrer}
               setOpenFilter={setOpenFiltrer}
-              projectState={projectState}
-              setProjectState={setProjectState}
             />}
         </div>
       </div>
-      <Menu openMenu={openMenu} setOpenMenu={setOpenMenu} projectState={projectState} setProjectState={setProjectState} />
+      <Menu openMenu={openMenu} setOpenMenu={setOpenMenu} />
     </>
   )
 }
