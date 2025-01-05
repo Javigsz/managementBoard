@@ -7,6 +7,7 @@ import SectionActions from './SectionActions'
 import TaskActions from './Task/TaskActions'
 import Task from './Task/Task'
 import { useStore } from '../../store/store'
+import Droppable from './Droppable'
 
 const MainBoard = () => {
   const [showTask, setShowTask] = useState(false)
@@ -139,6 +140,7 @@ const MainBoard = () => {
         onDragEnd={() => setIsDragging(false)}
         onDragCancel={() => setIsDragging(false)}
       >
+        <Droppable />
         <div
           className='background'
           style={{

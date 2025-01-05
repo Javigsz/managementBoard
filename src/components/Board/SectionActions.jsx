@@ -1,5 +1,6 @@
 import React from 'react'
 import { useStore } from '../../store/store'
+import arrow from '../../assets/right_arrow.svg'
 
 const SectionActions = ({ section, closeModal, sectionPosition, projectState, setProjectState, handleClickAddTask }) => {
   const modalStyle = {
@@ -54,13 +55,12 @@ const SectionActions = ({ section, closeModal, sectionPosition, projectState, se
     <>
       <div className='modal_backdrop' onClick={() => closeModal()}>
         <div style={modalStyle} onClick={e => e.stopPropagation()}>
-          <button className='section-action' onClick={() => handleClickAdd()}>Add task</button>
-          <button className='section-action' onClick={() => handleClickDelete()}>Delete</button>
+          <button className='section-action' onClick={() => handleClickAdd()}>Add task </button>
           <button className='section-action' onClick={() => handleClickCopy()}>Copy list</button>
-          <button className='section-action' onClick={() => handleClickMove()}>Move list ➡️</button>
-          <button className='section-action' onClick={() => handleClickMoveAll()}>Move all tasks ➡️</button>
-          <button className='section-action' onClick={() => handleClickDeleteAll()}>Delete all tasks ❌</button>
-          <button className='section-action' style={{ backgroundColor: 'red' }} onClick={() => closeModal()}>Close</button>
+          <button className='section-action' onClick={() => handleClickMove()}>Move list &nbsp;<img className='arrow' src={arrow} /></button>
+          <button className='section-action' onClick={() => handleClickMoveAll()}>Move all tasks &nbsp;<img className='arrow' src={arrow} /></button>
+          <button className='section-action delete' onClick={() => handleClickDelete()}>Delete</button>
+          <button className='section-action delete' onClick={() => handleClickDeleteAll()}>Delete all tasks</button>
         </div>
       </div>
     </>

@@ -9,20 +9,20 @@ import tinycolor from 'tinycolor2'
 import { useStore } from '../../../store/store'
 
 const Task = ({ taskInd, sectionInd, closeModal }) => {
+  const [selectedValue, setSelectedValue] = useState('')
+  const [showColors, setShowColors] = useState(false)
   const modalStyle = {
     position: 'absolute',
     display: 'flex',
     flexDirection: 'column',
-    right: -20,
-    top: -18,
+    left: '200px',
+    top: '20px',
     backgroundColor: 'transparent',
     padding: '15px',
     gap: '8px',
-    zIndex: 1,
+    zIndex: 100000,
     color: 'white'
   }
-  const [selectedValue, setSelectedValue] = useState('')
-  const [showColors, setShowColors] = useState(false)
 
   const {
     project: {
@@ -95,7 +95,7 @@ const Task = ({ taskInd, sectionInd, closeModal }) => {
   }
 
   const handleColorClickChange = (e) => {
-    const hexcolor = tinycolor(e.target.style.backgroundColor).toHexString()
+    const hexcolor = tinycolor(e.target.style.backgroundColor).toHexString().toUpperCase()
     changeColorTask(task, hexcolor)
     setShowColors(false)
   }
@@ -112,26 +112,30 @@ const Task = ({ taskInd, sectionInd, closeModal }) => {
     removeUserFromTask(task.id, index)
   }
 
+  const changeColors = (e) => {
+    setShowColors(!showColors)
+  }
+
   return (
     <>
       <div className='modal_backdrop' onClick={() => closeModal()}>
         <div className='task_modal' style={{ backgroundColor: task.color }} onClick={e => e.stopPropagation()}>
-          <div className='color'>
-            <button onClick={() => setShowColors(!showColors)} className='change-color-button'><IoIosColorPalette size={20} /></button>
-            {showColors && (
-              <div className='task-actions' style={modalStyle} onClick={e => e.stopPropagation()}>
-                <div className='colors'>
-                  <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#1B59CA' }} className='task-color' />
-                  <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#7C5E07' }} className='task-color' />
-                  <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#A04700' }} className='task-color' />
-                  <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#4F6A24' }} className='task-color' />
-                  <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#8F3E71' }} className='task-color' />
-                  <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#A82D20' }} className='task-color' />
-                  <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#323131' }} className='task-color' />
-                  <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#5E50B0' }} className='task-color' />
-                </div>
+          {showColors && (
+            <div style={modalStyle} onClick={e => e.stopPropagation()}>
+              <div className='colors'>
+                <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#1B59CA' }} className='task-color' />
+                <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#7C5E07' }} className='task-color' />
+                <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#A04700' }} className='task-color' />
+                <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#4F6A24' }} className='task-color' />
+                <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#8F3E71' }} className='task-color' />
+                <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#A82D20' }} className='task-color' />
+                <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#323131' }} className='task-color' />
+                <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#5E50B0' }} className='task-color' />
               </div>
-            )}
+            </div>
+          )}
+          <div className='color'>
+            <button onClick={(e) => changeColors(e)} className='change-color-button'><IoIosColorPalette size={20} /></button>
           </div>
           <textarea
             className='task-name-input'
@@ -190,7 +194,7 @@ const Task = ({ taskInd, sectionInd, closeModal }) => {
             <button className='task-button' onClick={e => handleEditTask()}>Edit</button>
             <button className='task-button' onClick={e => handleDuplicateTask()}>Duplicate</button>
             <button className='task-button' onClick={e => handleDeleteTask()}>Delete</button>
-            <button className='task-button' onClick={e => handleMoveTask()}>Move Task ➡️</button>
+            <button className='task-button' onClick={e => handleMoveTask()}>Move Task</button>
             <button className='task-button' onClick={e => closeModal()}>Close</button>
           </div>
         </div>

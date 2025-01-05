@@ -22,7 +22,7 @@
     background-image: url('https://www.colliers.com/-/media/images/colliers/asia/philippines/colliers-review/collierreview_hero_image_01312022_v2/hero_image_tondominium/hero_image_021522/hero_image_colliersviewpoint_022222.ashx?bid=0f5b3ed2a8de41f89e1a8d557e48f9f8');
     background-size: cover;
     opacity: 0.6; /* Ajustar nivel de opacidad */
-    z-index: -1; /* Asegurar que la imagen de fondo esté detrás del texto */
+    z-index: -4; /* Asegurar que la imagen de fondo esté detrás del texto */
 }
   
 .header-input {
@@ -129,16 +129,17 @@
     border: none;
     color: white;
     cursor: pointer;
-    font-size: 15px;
-    font-weight: bold;
+    font-size: 14px;
+    /* font-weight: bold; */
     padding: 10px;
     width:100%;
     border-radius:5px;
     text-decoration: none;
+    transition: box-shadow 0.3s ease-in-out;
 }
 
 .menu-button:hover {
-    background-color:black;
+    box-shadow: 0 0 8px white;
 }
 
 .close-button{
@@ -150,11 +151,11 @@
     color: white;
     cursor: pointer;
     font-size: 15px;
-    font-weight: bold;
     padding: 10px;
     width:100%;
     border-radius:5px;
     text-decoration: none;
+    transition : background-color 0.3s ease-in-out;
 }
 
 .close-button:hover {
@@ -234,7 +235,7 @@
 }
 
 .mini-menu-button {
-    background-color: black;
+    background-color:transparent;
     border: none;
     color: white;
     cursor: pointer;
@@ -246,6 +247,7 @@
     padding:0px;
     margin-top:10px;
     text-decoration: none;
+    box-shadow: 0 0 4px white;
 }
 
 .mini-menu-button:hover {
@@ -321,7 +323,7 @@
     width:300px;
     box-shadow: 0 0 5px black; 
     border: 1px solid black;
-  }
+}
 
 .modal {
     position: absolute;
@@ -415,4 +417,63 @@
 .clear-button:hover {
     background-color: white;
     color: black;
+}
+
+.search-result {
+    background-color:#333;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 10px;
+    font-weight: bold;
+    position: absolute;
+    top: 40px;
+    right: 90px;
+    z-index: 3;
+    width: 300px;
+    max-height: 400px;
+    font-size: 13px;
+    overflow:auto;
+}
+
+.search-button {
+    position:fixed;
+    right: 12%;
+    display: flex;
+    justify-content: center;
+    border: none;
+    background-color: white;
+}
+
+.search-button:hover {
+    cursor:pointer;
+}
+
+.bold-span{
+    font-weight: bold;
+}
+
+.search-result li:nth-child(odd) {
+    background-color: black; 
+    border: solid 3px transparent;
+}
+
+.search-result li:nth-child(even) {
+    border: solid 3px black; 
+}
+
+.search-result-item:hover {
+    cursor:pointer;
+    text-decoration: underline;
+}
+
+.search-result li {
+    list-style: none;
+    padding: 5px;
+    /* border-radius: 5px; */
+}
+
+.search-result ul{
+    margin:0;
+    padding:0;
 }

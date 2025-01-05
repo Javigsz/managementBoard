@@ -10,7 +10,7 @@
 
 - [☑️] Control when title is empty so it doesnt show 'localhost'
 
-- [ ] Refactor / Custom Hooks
+- [☑️] Refactor / Custom Hooks
 
 - [ ] Improve add User to Task forms
 

@@ -41,7 +41,7 @@ const Menu = ({ openMenu, setOpenMenu }) => {
   return (
     <>
       <div className={`dropdown-menu ${openMenu ? 'open' : ''}`}>
-        <h2>Menu</h2>
+        <h3>Menu</h3>
         <div className='thin-line' />
         <div className='menu-content'>
           <ul className='menu-list'>

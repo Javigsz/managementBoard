@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import tinycolor from 'tinycolor2'
 import { useStore } from '../../../store/store'
+import arrow from '../../../assets/right_arrow.svg'
 
 const TaskActions = ({ task, closeModal, sectionPosition }) => {
   const [showColors, setShowColors] = useState(false)
@@ -58,7 +59,7 @@ const TaskActions = ({ task, closeModal, sectionPosition }) => {
       <div className='modal_backdrop' onClick={() => closeModal()}>
         {showColors
           ? (
-            <div className='task-actions' style={modalStyle} onClick={e => e.stopPropagation()}>
+            <div style={modalStyle} onClick={e => e.stopPropagation()}>
               <div className='colors'>
                 <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#1B59CA' }} className='task-color' />
                 <button onClick={(e) => handleColorClickChange(e)} style={{ backgroundColor: '#7C5E07' }} className='task-color' />
@@ -74,10 +75,10 @@ const TaskActions = ({ task, closeModal, sectionPosition }) => {
           : (
             <div className='task-actions' style={modalStyle} onClick={e => e.stopPropagation()}>
               <button className='task-action' onClick={() => handleEditClick()}>Edit</button>
-              <button className='task-action' onClick={() => handleMoveTask()}>Move task ➡️</button>
+              <button className='task-action' onClick={() => handleMoveTask()}>Move Task &nbsp;<img className='arrow' src={arrow} /></button>
               <button className='task-action' onClick={() => handleColorClick()}>Change color</button>
               <button className='task-action' onClick={() => handleSizeClick()}>Change size</button>
-              <button className='task-action' onClick={() => handleEditDelete()}>Delete</button>
+              <button className='task-action delete' onClick={() => handleEditDelete()}>Delete</button>
             </div>
             )}
       </div>
